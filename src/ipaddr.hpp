@@ -9,7 +9,15 @@
 #include <string>
 #include "string_util.hpp"
 
-#include <iostream>
+#if(defined(WIN32)||defined(_WIN32)||defined(__WIN32__)||defined(__CYGWIN__))
+	#include <windows.h>
+	#include <Winsock2.h>
+	#include <ws2tcpip.h>
+#else
+	#include <arpa/inet.h>
+#endif
+
+#define MAX_IP_LEN 300
 
 class ipaddr_t
 {
@@ -23,13 +31,24 @@ class ipaddr_t
 		ipaddr_t(const std::string& ip):version_m(V4)
 		{
 			std::string str(ip);
-
 			memset(octets_m,0,16);
 			memset(submask_m,0,16);
 			str=to_lower(strip(str));
+			if(str!="any"&&!parse_ip_m(str))
+				throw std::runtime_error("\""+ip+"\" is not a valid ip address.");
+		}
 
-			if(str!="any"&&!from_ipv4_m(str))//&&!from_ipv6_m(str))
-				throw std::runtime_error("\""+ip+"\" is not a valid address.");
+		std::string str() const
+		{
+			std::string ip;
+			ip.resize(MAX_IP_LEN);
+
+			if(version_m==V4&&inet_ntop(AF_INET,octets_m,(char*)ip.c_str(),MAX_IP_LEN)!=NULL)
+				return ip;
+			if(version_m==V6&&inet_ntop(AF_INET6,octets_m,(char*)ip.c_str(),MAX_IP_LEN)!=NULL)
+				return ip;
+
+			throw std::runtime_error("Could not convert ip to a string.");
 		}
 
 	private:
@@ -37,41 +56,62 @@ class ipaddr_t
 		uint8_t submask_m[16];
 		version_t version_m;
 
-		bool from_ipv4_m(const std::string& ip)
+		bool parse_ip_m(const std::string& ip)
 		{
-			int octets[4];
-			int submask=32;
-			int copied=sscanf(ip.c_str(),"%d.%d.%d.%d/%d",
-				octets+0,octets+1,octets+2,octets+3,&submask);
+			std::string ip_str;
+			ip_str.resize(MAX_IP_LEN);
 
-			if(copied!=4&&copied!=5)
-				return false;
-			for(int ii=0;ii<4;++ii)
-				if(octets[ii]>255||octets[ii]<0)
+			#if(defined(WIN32)||defined(_WIN32)||defined(__WIN32__)||defined(__CYGWIN__))
+				sockaddr_in ip_addr;
+				sockaddr_in6 ip6_addr;
+				int len=MAX_IP_LEN;
+				WSADATA temp;
+				WSAStartup(0x0002,&temp);
+
+				if(WSAStringToAddress((char*)ip.c_str(),AF_INET,NULL,(sockaddr*)&ip_addr,&len)==0)
+				{
+					version_m=V4;
+					memset(octets_m,0,16);
+					for(int ii=0;ii<4;++ii)
+						octets_m[ii]=((uint8_t*)&ip_addr.sin_addr)[ii];
+					return true;
+				}
+				else if(WSAGetLastError()==WSAEINVAL&&
+					WSAStringToAddress((char*)ip.c_str(),AF_INET6,NULL,(sockaddr*)&ip6_addr,&len)==0)
+				{
+					version_m=V6;
+					memset(octets_m,0,16);
+					for(int ii=0;ii<16;++ii)
+						octets_m[ii]=((uint8_t*)&ip6_addr.sin6_addr)[ii];
+					return true;
+				}
+				else if(WSAGetLastError()==WSAEINVAL)
 					return false;
-			if(submask<0||submask>32)
-				return false;
+				else
+					throw std::runtime_error("Windows failed to parse \""+ip+"\".");
+			#else
+				in_addr ip_addr;
+				in6_addr ip6_addr;
 
-			std::ostringstream ostr;
+				if(inet_pton(AF_INET,ip.c_str(),&ip_addr)==1)
+				{
+					version_m=V4;
+					memset(octets_m,0,16);
+					for(int ii=0;ii<4;++ii)
+						octets_m[ii]=((uint8_t*)&ip_addr)[ii];
+					return true;
+				}
+				else if(inet_pton(AF_INET6,ip.c_str(),&ip6_addr)==1)
+				{
+					version_m=V6;
+					memset(octets_m,0,16);
+					for(int ii=0;ii<16;++ii)
+						octets_m[ii]=((uint8_t*)&ip6_addr)[ii];
+					return true;
+				}
+			#endif
 
-			for(int ii=0;ii<4;++ii)
-			{
-				ostr<<octets[ii];
-				if(ii<3)
-					ostr<<".";
-			}
-			if(copied==5)
-				ostr<<"/"<<submask;
-			if(ostr.str()!=ip)
-				return false;
-
-			submask_from_int_m(submask);
-
-			for(int ii=0;ii<4;++ii)
-				octets_m[ii]=(uint8_t)octets[ii];
-
-			version_m=V4;
-			return true;
+			return false;
 		}
 
 		void submask_from_int_m(const int mask)

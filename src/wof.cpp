@@ -71,11 +71,18 @@ void validate(const json::Object& obj)
 
 int main(int argc,char* argv[])
 {
-	ipaddr_t addr("234.245.33.0/26---");
-	return 0;
-
 	try
 	{
+		//ipaddr_t addr("1:22:333:aaaa::c:d:e");
+		ipaddr_t addr("::1/24");
+		//ipaddr_t addr("192.168.1.1");
+		std::cout<<addr.str()<<std::endl;
+		return 0;
+
+
+
+
+
 		std::string data;
 		std::string temp;
 		std::istream* istr=&std::cin;
