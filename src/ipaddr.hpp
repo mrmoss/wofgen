@@ -1,3 +1,5 @@
+//Windows Dependencies: -lWs2_32
+
 #ifndef IPADDR_HPP
 #define IPADDR_HPP
 
@@ -18,6 +20,15 @@
 #endif
 
 #define MAX_IP_LEN 300
+
+
+
+
+#include <iostream>
+
+
+
+
 
 class ipaddr_t
 {
@@ -43,10 +54,34 @@ class ipaddr_t
 			std::string ip;
 			ip.resize(MAX_IP_LEN);
 
-			if(version_m==V4&&inet_ntop(AF_INET,octets_m,(char*)ip.c_str(),MAX_IP_LEN)!=NULL)
-				return ip;
-			if(version_m==V6&&inet_ntop(AF_INET6,octets_m,(char*)ip.c_str(),MAX_IP_LEN)!=NULL)
-				return ip;
+			#if(defined(WIN32)||defined(_WIN32)||defined(__WIN32__)||defined(__CYGWIN__))
+				sockaddr_in ip_addr;
+				sockaddr_in6 ip6_addr;
+				ip_addr.sin_family=AF_INET;
+				ip_addr.sin_port=0;
+				ip6_addr.sin6_family=AF_INET6;
+				ip6_addr.sin6_port=0;
+				ip6_addr.sin6_scope_id=0;
+				memcpy(&ip_addr.sin_addr,octets_m,4);
+				memcpy(&ip6_addr.sin6_addr,octets_m,16);
+				DWORD len=MAX_IP_LEN;
+				WSADATA temp;
+				WSAStartup(0x0002,&temp);
+
+				if(version_m==V4&&WSAAddressToString((sockaddr*)&ip_addr,
+					sizeof(ip_addr),NULL,(char*)ip.c_str(),&len)==0)
+					return ip;
+				if(version_m==V6&&WSAAddressToString((sockaddr*)&ip6_addr,
+					sizeof(ip6_addr),NULL,(char*)ip.c_str(),&len)==0)
+					return ip;
+			#else
+				if(version_m==V4&&inet_ntop(AF_INET,octets_m,(char*)ip.c_str(),
+					MAX_IP_LEN)!=NULL)
+					return ip;
+				if(version_m==V6&&inet_ntop(AF_INET6,octets_m,(char*)ip.c_str(),
+					MAX_IP_LEN)!=NULL)
+					return ip;
+			#endif
 
 			throw std::runtime_error("Could not convert ip to a string.");
 		}

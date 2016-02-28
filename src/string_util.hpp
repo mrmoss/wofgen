@@ -23,7 +23,8 @@ inline std::string strip(std::string str)
 
 inline std::string to_lower(std::string str)
 {
-	std::transform(str.begin(),str.end(),str.begin(),tolower);
+	for(size_t ii=0;ii<str.size();++ii)
+		str[ii]=tolower(str[ii]);
 	return str;
 }
 

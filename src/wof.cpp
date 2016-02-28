@@ -73,10 +73,11 @@ int main(int argc,char* argv[])
 {
 	try
 	{
-		//ipaddr_t addr("1:22:333:aaaa::c:d:e");
-		ipaddr_t addr("::1/24");
-		//ipaddr_t addr("192.168.1.1");
-		std::cout<<addr.str()<<std::endl;
+		std::cout<<(ipaddr_t("192.168.1.1")).str()<<std::endl;
+		std::cout<<(ipaddr_t("1:22:333:aaaa::c:d:e")).str()<<std::endl;
+		std::cout<<(ipaddr_t("::e")).str()<<std::endl;
+		std::cout<<(ipaddr_t("::1")).str()<<std::endl;
+		std::cout<<(ipaddr_t("::1/24")).str()<<std::endl;
 		return 0;
 
 
