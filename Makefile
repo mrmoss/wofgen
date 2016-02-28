@@ -12,8 +12,8 @@ endif
 
 all: wof
 
-wof: $(SRC)/wof.cpp $(JSON_SRC)
-	$(CXX) $(CFLAGS) $(SRC)/wof.cpp $(JSON_SRC) $(LIBS) -o wof -Wno-tautological-constant-out-of-range-compare
+wof: $(SRC)/ipaddr.cpp $(SRC)/wof.cpp $(JSON_SRC)
+	$(CXX) $(CFLAGS) $(SRC)/ipaddr.cpp $(SRC)/wof.cpp $(JSON_SRC) $(LIBS) -o wof -Wno-tautological-constant-out-of-range-compare
 
 clean:
 	- rm -f wof wof.exe
