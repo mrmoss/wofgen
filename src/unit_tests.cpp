@@ -67,7 +67,6 @@ int main(int argc,char* argv[])
 		}
 
 		std::cout<<"!!!!!!!!!PASSED!!!!!!!!!"<<std::endl;
-
 		return 0;
 	}
 	catch(std::exception& error)
@@ -82,6 +81,4 @@ int main(int argc,char* argv[])
 		std::cout<<"!!!!!!!!!FAILED!!!!!!!!!"<<std::endl;
 		return 1;
 	}
-
-	return 0;
 }

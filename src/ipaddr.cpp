@@ -71,18 +71,30 @@ std::string ipaddr_t::str() const
 		WSADATA temp;
 		WSAStartup(0x0002,&temp);
 
-		if(version_m==V4&&WSAAddressToString((sockaddr*)&ip_addr,sizeof(ip_addr),NULL,(char*)ip.c_str(),&len)==0)
-			return ip+"/"+to_string(submask_m);
-		if(version_m==V6&&WSAAddressToString((sockaddr*)&ip6_addr,sizeof(ip6_addr),NULL,(char*)ip.c_str(),&len)==0)
-			return "["+ip+"]/"+to_string(submask_m);
+		std::ostringstream ostr;
+
+		if(version_m==V4&&WSAAddressToString((sockaddr*)&ip_addr,sizeof(ip_addr),NULL,(char*)ip.c_str(),&len)==0&&len-1>0)
+		{
+			ip.resize(len-1);
+			ostr<<ip<<std::flush;
+		}
+		else if(version_m==V6&&WSAAddressToString((sockaddr*)&ip6_addr,sizeof(ip6_addr),NULL,(char*)ip.c_str(),&len)==0&&len-1>0)
+		{
+			ip.resize(len-1);
+			ostr<<'['<<ip<<']'<<std::flush;
+		}
 	#else
 		if(version_m==V4&&inet_ntop(AF_INET,octets_m,(char*)ip.c_str(),MAX_IP_LEN)!=NULL)
-			return ip+"/"+to_string(submask_m);
-		if(version_m==V6&&inet_ntop(AF_INET6,octets_m,(char*)ip.c_str(),MAX_IP_LEN)!=NULL)
-			return "["+ip+"]/"+to_string(submask_m);
+			ostr<<ip<<std::flush;
+		else if(version_m==V6&&inet_ntop(AF_INET6,octets_m,(char*)ip.c_str(),MAX_IP_LEN)!=NULL)
+			ostr<<'['<<ip<<']'<<std::flush;
 	#endif
 
-	throw std::runtime_error("Could not convert ip to a string.");
+	if(ostr.str().size()<=0)
+		throw std::runtime_error("Could not convert ip to a string.");
+
+	ostr<<"/"<<to_string(submask_m)<<std::flush;
+	return ostr.str();
 }
 
 bool ipaddr_t::parse_ip_m(const std::string& ip)
@@ -108,7 +120,7 @@ bool ipaddr_t::parse_ip_m(const std::string& ip)
 		{
 			version_m=V4;
 			memset(octets_m,0,16);
-			memcpy(octets_m,&ip6_addr.sin_addr,4);
+			memcpy(octets_m,&ip_addr.sin_addr,4);
 			return validate_m();
 		}
 		else if((WSAGetLastError()==WSAEINVAL||version_m==V6)&&WSAStringToAddress((char*)ip_copy.c_str(),AF_INET6,NULL,(sockaddr*)&ip6_addr,&len)==0)
@@ -147,7 +159,7 @@ bool ipaddr_t::validate_m() const
 {
 	bool broadcast=true;
 	for(int ii=0;((version_m==V4&&ii<4)||(version_m==V6&&ii<16))&&broadcast;++ii)
-		if(octets_m[ii]!=255)
+		if((int)octets_m[ii]!=255)
 			broadcast=false;
 	return !broadcast;
 }
