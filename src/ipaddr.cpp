@@ -23,21 +23,16 @@ ipaddr_t::ipaddr_t(const std::string& ip):version_m(V4),submask_m(-1)
 	std::string str(ip);
 	memset(octets_m,0,16);
 	memset(submask_arr_m,0,16);
-	str=to_lower(strip(str));
-
-	std::vector<std::string> parts=split(str,"/");
+	std::vector<std::string> parts=split(to_lower(strip(str)),"/");
 	bool was_any=false;
 
 	if(parts.size()>=1||parts.size()<=2)
 	{
 		str=parts[0];
-
 		if(parts.size()==2)
 			submask_m=str_to_int(parts[1]);
-
 		if(str=="any")
 			was_any=true;
-
 		if(str!="any"&&!parse_ip_m(str))
 			throw std::runtime_error("\""+ip+"\" is not a valid ip address.");
 
