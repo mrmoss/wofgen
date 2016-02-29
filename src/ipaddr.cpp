@@ -26,6 +26,7 @@ ipaddr_t::ipaddr_t(const std::string& ip):version_m(V4),submask_m(-1)
 	str=to_lower(strip(str));
 
 	std::vector<std::string> parts=split(str,"/");
+	bool was_any=false;
 
 	if(parts.size()>=1||parts.size()<=2)
 	{
@@ -34,6 +35,9 @@ ipaddr_t::ipaddr_t(const std::string& ip):version_m(V4),submask_m(-1)
 		if(parts.size()==2)
 			submask_m=str_to_int(parts[1]);
 
+		if(str=="any")
+			was_any=true;
+
 		if(str!="any"&&!parse_ip_m(str))
 			throw std::runtime_error("\""+ip+"\" is not a valid ip address.");
 
@@ -41,8 +45,13 @@ ipaddr_t::ipaddr_t(const std::string& ip):version_m(V4),submask_m(-1)
 			submask_m=32;
 		else if(submask_m==-1&&version_m==V6)
 			submask_m=128;
-
-		submask_from_int_m();
+		memset(submask_arr_m,0xff,submask_m/8);
+		for(int ii=0;ii<submask_m%8;++ii)
+			submask_arr_m[submask_m/8]|=(1<<(7-ii));
+		if(submask_m>32&&was_any)
+			version_m=V6;
+		if((submask_m>32&&version_m==V4)||(submask_m>128&&version_m==V6))
+			throw std::runtime_error("/"+to_string(submask_m)+" is not a valid subnet mask.");
 	}
 }
 
@@ -128,11 +137,4 @@ bool ipaddr_t::parse_ip_m(const std::string& ip)
 	#endif
 
 	return false;
-}
-
-void ipaddr_t::submask_from_int_m()
-{
-	memset(submask_arr_m,0xff,submask_m/8);
-	for(int ii=0;ii<submask_m%8;++ii)
-		submask_arr_m[submask_m/8]|=(1<<(7-ii));
 }
