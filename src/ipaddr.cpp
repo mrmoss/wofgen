@@ -42,13 +42,13 @@ ipaddr_t::ipaddr_t(const std::string& ip):version_m(V4),submask_m(-1)
 			submask_m=32;
 		else if(submask_m==-1&&version_m==V6)
 			submask_m=128;
-		memset(submask_arr_m,0xff,submask_m/8);
-		for(int ii=0;ii<submask_m%8;++ii)
-			submask_arr_m[submask_m/8]|=(1<<(7-ii));
 		if(submask_m>32&&was_any)
 			version_m=V6;
 		if((submask_m>32&&version_m==V4)||(submask_m>128&&version_m==V6))
 			throw std::runtime_error("/"+to_string(submask_m)+" is not a valid subnet mask.");
+		memset(submask_arr_m,0xff,submask_m/8);
+		for(int ii=0;ii<submask_m%8;++ii)
+			submask_arr_m[submask_m/8]|=(1<<(7-ii));
 	}
 }
 
