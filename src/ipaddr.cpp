@@ -56,6 +56,7 @@ std::string ipaddr_t::str() const
 {
 	std::string ip;
 	ip.resize(MAX_IP_LEN);
+	std::ostringstream ostr;
 
 	#if(defined(WIN32)||defined(_WIN32)||defined(__WIN32__)||defined(__CYGWIN__))
 		sockaddr_in ip_addr;
@@ -70,8 +71,6 @@ std::string ipaddr_t::str() const
 		DWORD len=MAX_IP_LEN;
 		WSADATA temp;
 		WSAStartup(0x0002,&temp);
-
-		std::ostringstream ostr;
 
 		if(version_m==V4&&WSAAddressToString((sockaddr*)&ip_addr,sizeof(ip_addr),NULL,(char*)ip.c_str(),&len)==0&&len-1>0)
 		{
