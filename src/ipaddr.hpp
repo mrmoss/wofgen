@@ -25,6 +25,7 @@ class ipaddr_t
 		int submask_m;
 
 		bool parse_ip_m(const std::string& ip);
+		bool validate_m() const;
 };
 
 #endif

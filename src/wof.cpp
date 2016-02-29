@@ -73,19 +73,6 @@ int main(int argc,char* argv[])
 {
 	try
 	{
-		std::cout<<(ipaddr_t("192.168.1.1/7")).str()<<std::endl;
-		std::cout<<(ipaddr_t("1:22:333:aaaa::c:d:e")).str()<<std::endl;
-		std::cout<<(ipaddr_t("::e")).str()<<std::endl;
-		std::cout<<(ipaddr_t("any")).str()<<std::endl;
-		std::cout<<(ipaddr_t("::1")).str()<<std::endl;
-		std::cout<<(ipaddr_t("any/38")).str()<<std::endl;
-		std::cout<<(ipaddr_t("::1/24")).str()<<std::endl;
-		return 0;
-
-
-
-
-
 		std::string data;
 		std::string temp;
 		std::istream* istr=&std::cin;

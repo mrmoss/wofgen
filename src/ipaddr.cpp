@@ -33,7 +33,9 @@ ipaddr_t::ipaddr_t(const std::string& ip):version_m(V4),submask_m(-1)
 			submask_m=str_to_int(parts[1]);
 		if(str=="any")
 			was_any=true;
-		if(str!="any"&&!parse_ip_m(str))
+		if(str=="[any]")
+			version_m=V6;
+		if(str!="any"&&str!="[any]"&&!parse_ip_m(str))
 			throw std::runtime_error("\""+ip+"\" is not a valid ip address.");
 
 		if(submask_m==-1&&version_m==V4)
@@ -72,12 +74,12 @@ std::string ipaddr_t::str() const
 		if(version_m==V4&&WSAAddressToString((sockaddr*)&ip_addr,sizeof(ip_addr),NULL,(char*)ip.c_str(),&len)==0)
 			return ip+"/"+to_string(submask_m);
 		if(version_m==V6&&WSAAddressToString((sockaddr*)&ip6_addr,sizeof(ip6_addr),NULL,(char*)ip.c_str(),&len)==0)
-			return ip+"/"+to_string(submask_m);
+			return "["+ip+"]/"+to_string(submask_m);
 	#else
 		if(version_m==V4&&inet_ntop(AF_INET,octets_m,(char*)ip.c_str(),MAX_IP_LEN)!=NULL)
 			return ip+"/"+to_string(submask_m);
 		if(version_m==V6&&inet_ntop(AF_INET6,octets_m,(char*)ip.c_str(),MAX_IP_LEN)!=NULL)
-			return ip+"/"+to_string(submask_m);
+			return "["+ip+"]/"+to_string(submask_m);
 	#endif
 
 	throw std::runtime_error("Could not convert ip to a string.");
@@ -85,8 +87,15 @@ std::string ipaddr_t::str() const
 
 bool ipaddr_t::parse_ip_m(const std::string& ip)
 {
+	std::string ip_copy(ip);
 	std::string ip_str;
 	ip_str.resize(MAX_IP_LEN);
+
+	if(ip_copy.size()>=2&&ip_copy[0]=='['&&ip_copy[ip_copy.size()-1]==']')
+	{
+		version_m=V6;
+		ip_copy=ip_copy.substr(1,ip_copy.size()-2);
+	}
 
 	#if(defined(WIN32)||defined(_WIN32)||defined(__WIN32__)||defined(__CYGWIN__))
 		sockaddr_in ip_addr;
@@ -95,18 +104,18 @@ bool ipaddr_t::parse_ip_m(const std::string& ip)
 		WSADATA temp;
 		WSAStartup(0x0002,&temp);
 
-		if(WSAStringToAddress((char*)ip.c_str(),AF_INET,NULL,(sockaddr*)&ip_addr,&len)==0)
+		if(version_m==V4&&WSAStringToAddress((char*)ip_copy.c_str(),AF_INET,NULL,(sockaddr*)&ip_addr,&len)==0)
 		{
 			version_m=V4;
 			memset(octets_m,0,16);
 			memcpy(octets_m,&ip6_addr.sin_addr,4);
-			return true;
+			return validate_m();
 		}
-		else if(WSAGetLastError()==WSAEINVAL&&WSAStringToAddress((char*)ip.c_str(),AF_INET6,NULL,(sockaddr*)&ip6_addr,&len)==0)
+		else if((WSAGetLastError()==WSAEINVAL||version_m==V6)&&WSAStringToAddress((char*)ip_copy.c_str(),AF_INET6,NULL,(sockaddr*)&ip6_addr,&len)==0)
 		{
 			version_m=V6;
 			memcpy(octets_m,&ip6_addr.sin6_addr,16);
-			return true;
+			return validate_m();
 		}
 		else if(WSAGetLastError()==WSAEINVAL)
 			return false;
@@ -116,20 +125,29 @@ bool ipaddr_t::parse_ip_m(const std::string& ip)
 		in_addr ip_addr;
 		in6_addr ip6_addr;
 
-		if(inet_pton(AF_INET,ip.c_str(),&ip_addr)==1)
+		if(version_m==V4&&inet_pton(AF_INET,ip_copy.c_str(),&ip_addr)==1)
 		{
 			version_m=V4;
 			memset(octets_m,0,16);
 			memcpy(octets_m,&ip_addr,4);
-			return true;
+			return validate_m();
 		}
-		else if(inet_pton(AF_INET6,ip.c_str(),&ip6_addr)==1)
+		else if(inet_pton(AF_INET6,ip_copy.c_str(),&ip6_addr)==1)
 		{
 			version_m=V6;
 			memcpy(octets_m,&ip6_addr,16);
-			return true;
+			return validate_m();
 		}
 	#endif
 
 	return false;
+}
+
+bool ipaddr_t::validate_m() const
+{
+	bool broadcast=true;
+	for(int ii=0;((version_m==V4&&ii<4)||(version_m==V6&&ii<16))&&broadcast;++ii)
+		if(octets_m[ii]!=255)
+			broadcast=false;
+	return !broadcast;
 }
