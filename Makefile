@@ -11,7 +11,6 @@ ifeq ($(OS),Windows_NT)
 	CFLAGS+=-static-libstdc++ -static-libgcc -static
 else
 	CFLAGS+=-Wno-tautological-constant-out-of-range-compare
-	#-fno-stack-protector
 endif
 
 all: wof unit_tests
