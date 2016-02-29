@@ -20,11 +20,12 @@ class ipaddr_t
 
 	private:
 		uint8_t octets_m[16];
-		uint8_t submask_m[16];
+		uint8_t submask_arr_m[16];
 		version_t version_m;
+		int submask_m;
 
 		bool parse_ip_m(const std::string& ip);
-		void submask_from_int_m(const int mask);
+		void submask_from_int_m();
 };
 
 #endif

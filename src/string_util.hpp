@@ -54,4 +54,20 @@ inline std::vector<std::string> split(std::string str,const std::string& delimet
 	return tokens;
 }
 
+inline int str_to_int(const std::string& str)
+{
+	std::istringstream istr(str);
+	int ret=0;
+	if(!(istr>>ret))
+		throw std::runtime_error("\""+str+"\" is not an int.");
+	return ret;
+}
+
+inline std::string to_string(const int val)
+{
+	std::ostringstream ostr;
+	ostr<<val;
+	return ostr.str();
+}
+
 #endif
