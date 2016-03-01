@@ -117,14 +117,15 @@ void validate_rule(size_t index,json::Value& rule)
 	std::string action(rule["action"]);
 	std::string dir(rule["dir"]);
 
-	std::string from(std::string(rule["from"]["address"])+":");
+	std::string from(rule["from"]["address"]);
+	from+=":";
 	if((int)rule["from"]["port"]==0)
 		from+="any";
 	else
-		from+=to_string(rule["from"]["port"]);
+		from+=to_string((rule["from"])["port"]);
 
-	std::string to(std::string(rule["to"]["address"])+":");
-
+	std::string to(rule["to"]["address"]);
+	to+=":";
 	if((int)rule["to"]["port"]==0)
 		to+="any";
 	else
