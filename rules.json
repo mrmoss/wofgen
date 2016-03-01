@@ -1,0 +1,23 @@
+{
+	"defaults":
+	{
+		"in":"deny",
+		"out":"deny"
+	},
+	"rules":
+	[
+		{
+			"dir":"out",
+			"from":
+			{
+				"address":"any"
+			},
+			"to":
+			{
+				"address":"any",
+				"port":80
+			},
+			"action":"deny"
+		}
+	]
+}
