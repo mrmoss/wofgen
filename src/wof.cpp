@@ -1,5 +1,5 @@
 //test str
-//'{"defaults":{"in":"deny","out":"deny"},"rules":[{"dir":"out","from":{"address":"192.168.1.1/24","port":200},"to":{"address":"any"},"action":"deny"}]}'|./wof
+//echo '{"defaults":{"in":"deny","out":"deny"},"rules":[{"dir":"out","from":{"address":"192.168.1.1/24","port":200},"to":{"address":"any"},"action":"deny"}]}'|./wof
 #include <ctype.h>
 #include <fstream>
 #include <iostream>
