@@ -10,97 +10,19 @@ int main(int argc,char* argv[])
 	{
 		std::vector<std::string> pass_tests;
 			pass_tests.push_back("192.168.1.1/7");
-			pass_tests.push_back("192.168.1.1/7:1,200,1024,65535");
-			pass_tests.push_back("192.168.1.1/7:1");
-			pass_tests.push_back("192.168.1.1/7:200");
-			pass_tests.push_back("192.168.1.1/7:1024");
-			pass_tests.push_back("192.168.1.1/7:65535");
-
 			pass_tests.push_back("1:22:333:aaaa::c:d:e");
-			pass_tests.push_back("1:22:333:aaaa::c:d:e:1,200,1024,65535");
-			pass_tests.push_back("1:22:333:aaaa::c:d:e:1");
-			pass_tests.push_back("1:22:333:aaaa::c:d:e:200");
-			pass_tests.push_back("1:22:333:aaaa::c:d:e:1024");
-			pass_tests.push_back("1:22:333:aaaa::c:d:e:65535");
-
 			pass_tests.push_back("::e");
-			pass_tests.push_back("::e:1");
-			pass_tests.push_back("::e:200");
-			pass_tests.push_back("::e:1024");
-
 			pass_tests.push_back("any");
-			pass_tests.push_back("any:1,200,1024,65535");
-			pass_tests.push_back("any:1");
-			pass_tests.push_back("any:200");
-			pass_tests.push_back("any:1024");
-			pass_tests.push_back("any:65535");
-
 			pass_tests.push_back("::1");
-			pass_tests.push_back("::1:1");
-			pass_tests.push_back("::1:200");
-			pass_tests.push_back("::1:1024");
-
 			pass_tests.push_back("[::1]");
-			pass_tests.push_back("[::1]:1,200,1024,65535");
-			pass_tests.push_back("[::1]:1");
-			pass_tests.push_back("[::1]:200");
-			pass_tests.push_back("[::1]:1024");
-			pass_tests.push_back("[::1]:65535");
-
 			pass_tests.push_back("any/38");
-			pass_tests.push_back("any/38:1,200,1024,65535");
-			pass_tests.push_back("any/38:1");
-			pass_tests.push_back("any/38:200");
-			pass_tests.push_back("any/38:1024");
-			pass_tests.push_back("any/38:65535");
-
 			pass_tests.push_back("[any]");
-			pass_tests.push_back("[any]:1,200,1024,65535");
-			pass_tests.push_back("[any]:1");
-			pass_tests.push_back("[any]:200");
-			pass_tests.push_back("[any]:1024");
-			pass_tests.push_back("[any]:65535");
-
 			pass_tests.push_back("[any]/38");
-			pass_tests.push_back("[any]/38:1,200,1024,65535");
-			pass_tests.push_back("[any]/38:1");
-			pass_tests.push_back("[any]/38:200");
-			pass_tests.push_back("[any]/38:1024");
-			pass_tests.push_back("[any]/38:65535");
-
 			pass_tests.push_back("[any]/20");
-			pass_tests.push_back("[any]/20:1,200,1024,65535");
-			pass_tests.push_back("[any]/20:1");
-			pass_tests.push_back("[any]/20:200");
-			pass_tests.push_back("[any]/20:1024");
-			pass_tests.push_back("[any]/20:65535");
-
 			pass_tests.push_back("[::1]/24");
-			pass_tests.push_back("[::1]/24:1,200,1024,65535");
-			pass_tests.push_back("[::1]/24:1");
-			pass_tests.push_back("[::1]/24:200");
-			pass_tests.push_back("[::1]/24:1024");
-			pass_tests.push_back("[::1]/24:65535");
-
 			pass_tests.push_back("::1/24");
-			pass_tests.push_back("::1/24:1,200,1024,65535");
-			pass_tests.push_back("::1/24:1");
-			pass_tests.push_back("::1/24:200");
-			pass_tests.push_back("::1/24:1024");
-			pass_tests.push_back("::1/24:65535");
-
 			pass_tests.push_back("192.168.1.1");
-			pass_tests.push_back("192.168.1.1:1,200,1024,65535");
-			pass_tests.push_back("192.168.1.1:1");
-			pass_tests.push_back("192.168.1.1:200");
-			pass_tests.push_back("192.168.1.1:1024");
-			pass_tests.push_back("192.168.1.1:65535");
 			pass_tests.push_back("0.0.0.0");
-			pass_tests.push_back("0.0.0.0:1,200,1024,65535");
-			pass_tests.push_back("0.0.0.0:1");
-			pass_tests.push_back("0.0.0.0:200");
-			pass_tests.push_back("0.0.0.0:1024");
-			pass_tests.push_back("0.0.0.0:65535");
 
 		std::vector<std::string> fail_tests;
 			fail_tests.push_back("[any");
@@ -132,10 +54,6 @@ int main(int argc,char* argv[])
 			fail_tests.push_back("[ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]/200");
 			fail_tests.push_back("::1::");
 			fail_tests.push_back("[::1::]");
-			fail_tests.push_back("::e:1,200,1024,65535");
-			fail_tests.push_back("::e:65535");
-			fail_tests.push_back("::1:1,200,1024,65535");
-			fail_tests.push_back("::1:65535");
 
 		for(size_t ii=0;ii<pass_tests.size();++ii)
 			std::cout<<"|"<<pass_tests[ii]<<"|\t"<<ipaddr_t(pass_tests[ii]).str()<<std::endl;

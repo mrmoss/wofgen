@@ -29,23 +29,6 @@ ipaddr_t::ipaddr_t(const std::string& ip):version_m(V4),submask_m(-1)
 	//lowercase no whitespace
 	str=to_lower(strip(str));
 
-	//match a port list
-	std::string ports=match_port_list_m(str);
-	str.resize(str.size()-ports.size());
-
-	//V6 port lists are strange...if the address was V4, any, wrapped in [], or had a subnet mask, its good...
-	bool found_non=false;
-	for(size_t ii=0;ii<str.size()&&!found_non;++ii)
-		if(str[ii]=='a'||str[ii]=='n'||str[ii]=='y'||str[ii]=='/'||str[ii]=='['||str[ii]==']'||str[ii]=='.')
-			found_non=true;
-
-	//if it didn't have the above...then assume it wasn't a port list...
-	if(!found_non)
-	{
-		str+=ports;
-		ports="";
-	}
-
 	//split on '/' for subnet mask
 	std::vector<std::string> parts=split(str,"/");
 
@@ -89,9 +72,6 @@ ipaddr_t::ipaddr_t(const std::string& ip):version_m(V4),submask_m(-1)
 		memset(submask_arr_m,0xff,submask_m/8);
 		for(int ii=0;ii<submask_m%8;++ii)
 			submask_arr_m[submask_m/8]|=(1<<(7-ii));
-
-		//parse port list
-		parse_port_list_m(ip,ports);
 	}
 }
 
@@ -204,69 +184,6 @@ bool ipaddr_t::parse_ip_m(const std::string& ip)
 	#endif
 
 	return false;
-}
-
-std::string ipaddr_t::match_port_list_m(const std::string& str)
-{
-	std::string list;
-	if(str.size()==0)
-		return list;
-	size_t ptr=str.size()-1;
-
-	while(true)
-	{
-		if(isdigit(str[ptr])!=0||str[ptr]==','||str[ptr]=='-')
-		{
-			--ptr;
-		}
-		else
-		{
-			if(str[ptr]!=':')
-				ptr=str.size();
-			break;
-		}
-
-		if(ptr==0)
-		{
-			ptr=str.size();
-			break;
-		}
-	}
-
-	list=str.substr(ptr,str.size()-ptr);
-	return list;
-}
-
-void ipaddr_t::parse_port_list_m(const std::string& ip,std::string ports)
-{
-	if(ports.size()==0)
-		return;
-
-	std::string error_str("\""+ip+"\" has an invalid port list.");
-	std::vector<int> port_list_parsed;
-
-	if(ports[0]!=':')
-		throw std::runtime_error(error_str);
-
-	ports=ports.substr(1,ports.size());
-	std::vector<std::string> port_list=split(ports,",");
-
-	for(size_t ii=0;ii<port_list.size();++ii)
-	{
-		int start=-1;
-		int end=-1;
-		int count=sscanf(port_list[ii].c_str(),"%d-%d",&start,&end);
-
-		if(count==1&&start>0&&start<65536)
-			port_list_parsed.push_back(start);
-		else if(count==2&&start<=end&&start>0&&start<65536&&end>0&&end<65536)
-			for(int ii=start;ii<=end;++ii)
-				port_list_parsed.push_back(ii);
-		else
-			throw std::runtime_error(error_str);
-	}
-
-	ports_m=port_list_parsed;
 }
 
 bool ipaddr_t::validate_m() const

@@ -5,7 +5,6 @@
 
 #include <stdint.h>
 #include <string>
-#include <vector>
 
 class ipaddr_t
 {
@@ -24,11 +23,8 @@ class ipaddr_t
 		uint8_t submask_arr_m[16];
 		version_t version_m;
 		int submask_m;
-		std::vector<int> ports_m;
 
 		bool parse_ip_m(const std::string& ip);
-		std::string match_port_list_m(const std::string& str);
-		void parse_port_list_m(const std::string& ip,std::string ports);
 		bool validate_m() const;
 };
 
