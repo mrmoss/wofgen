@@ -91,6 +91,8 @@ void validate_rule(size_t index,json::Value& rule)
 	std::string expected_obj("expected type object ");
 	std::string bad_to("invalid to ");
 
+	if(!rule.HasKey("proto"))
+		throw std::runtime_error(err.str()+missing+"\"proto\".");
 	if(!rule.HasKey("dir"))
 		throw std::runtime_error(err.str()+missing+"\"dir\".");
 	if(!rule.HasKey("action"))
@@ -112,8 +114,12 @@ void validate_rule(size_t index,json::Value& rule)
 	if(to_err.size()>0)
 		throw std::runtime_error(err.str()+to_err+"\"to\".");
 
-	std::string action(rule["action"]);
+	std::string proto(rule["proto"]);
+	if(proto!="tcp4"&&proto!="udp4"&&proto!="tcp6"&&proto!="udp6")
+		throw std::runtime_error(err.str()+"invalid protocol \""+proto+"\".");
+
 	std::string dir(rule["dir"]);
+	std::string action(rule["action"]);
 
 	std::string from(rule["from"]["address"]);
 	from+=":";
@@ -132,7 +138,7 @@ void validate_rule(size_t index,json::Value& rule)
 	if(action!="deny"&&action!="allow")
 		throw std::runtime_error(bad_default+"\""+action+"\".");
 
-	output_str+=action+" "+dir+" "+from+" "+to+"\n";
+	output_str+=proto+" "+action+" "+dir+" "+from+" "+to+"\n";
 }
 
 void validate(json::Value& obj)

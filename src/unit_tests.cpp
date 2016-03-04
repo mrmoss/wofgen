@@ -9,6 +9,7 @@ int main(int argc,char* argv[])
 	try
 	{
 		std::vector<std::string> pass_tests;
+			pass_tests.push_back("2:2::");
 			pass_tests.push_back("192.168.1.1/7");
 			pass_tests.push_back("1:22:333:aaaa::c:d:e");
 			pass_tests.push_back("::e");
