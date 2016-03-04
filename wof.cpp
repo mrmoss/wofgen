@@ -5,6 +5,15 @@
 #include <string>
 #include <vector>
 
+extern std::string pre_rules();
+
+extern std::string gen_rule(const std::string& proto,
+	const std::string& l_ip,const std::string& l_mask,const std::string& l_port,
+	const std::string& dir,
+	const std::string& f_ip,const std::string& f_mask,const std::string& f_port,
+	const std::string& action,
+	const bool V6);
+
 static inline int ishexdigit(int c)
 {
 	return (isdigit(c)!=0||(isalpha(c)!=0&&tolower(c)>='a'&&tolower(c)<='f'));
@@ -224,11 +233,13 @@ static inline std::string parse_hextet(std::string& str)
 	return hextet;
 }
 
-static inline std::string parse_ipv4(std::string& str,const std::string& err="")
+static inline std::string parse_ipv4(std::string& str,bool& was_any,const std::string& err="")
 {
 	std::string ip=parse_any(str,"0.0.0.0");
+	was_any=true;
 	if(ip=="")
 	{
+		was_any=false;
 		for(int ii=0;ii<4;++ii)
 		{
 			std::string octet(parse_octet(str));
@@ -252,11 +263,13 @@ static inline void ipv6_invalid(const std::string& ip)
 	throw std::runtime_error("Invalid IPv6 address \""+ip+"\".");
 }
 
-static inline std::string parse_ipv6(std::string& str,const std::string& err="")
+static inline std::string parse_ipv6(std::string& str,bool& was_any,const std::string& err="")
 {
 	std::string ip=parse_any(str,"::");
+	was_any=true;
 	if(ip=="")
 	{
+		was_any=false;
 		ip=parse_to_symbol(str,"]");
 		if(ip.size()>0)
 		{
@@ -295,18 +308,18 @@ static inline std::string parse_ipv6(std::string& str,const std::string& err="")
 	return ip;
 }
 
-static inline std::string parse_ip(std::string& str,bool& v6,const std::string& err="")
+static inline std::string parse_ip(std::string& str,bool& was_any,bool& v6,const std::string& err="")
 {
 	std::string ip(parse_symbol(str));
 	str=strip_start(str);
 	if(ip=="[")
 	{
-		ip=parse_ipv6(str,err);
+		ip=parse_ipv6(str,was_any,err);
 		v6=true;
 	}
 	else if(ip=="")
 	{
-		ip=parse_ipv4(str,err);
+		ip=parse_ipv4(str,was_any,err);
 		v6=false;
 	}
 	else
@@ -316,13 +329,15 @@ static inline std::string parse_ip(std::string& str,bool& v6,const std::string& 
 	return ip;
 }
 
-static inline std::string parse_subnet_mask(std::string& str,const bool v6)
+static inline std::string parse_subnet_mask(std::string& str,const bool was_any,const bool v6)
 {
 	std::string mask(parse_symbol(str));
 	str=strip_start(str);
 	if(mask!="/")
 	{
 		str=mask+str;
+		if(was_any)
+			return "0";
 		if(v6)
 			return "128";
 		return "32";
@@ -359,19 +374,25 @@ static inline std::string parse_port(std::string& str)
 static inline std::string parse_dir(std::string& str)
 {
 	str=strip_start(str);
-	std::string dir(str.substr(0,1));
+	std::string dir(str.substr(0,2));
+	if(dir.size()==2&&ispunct(dir[1])==0)
+		dir=dir.substr(0,1);
+	if(dir.size()>0&&ispunct(dir[0])==0)
+		dir="";
 	if(dir=="")
-		throw std::runtime_error("Expected \"<\" or \">\" after local address.");
-	if(dir!="<"&&dir!=">")
-		throw std::runtime_error("Expected \"<\" or \">\" got \""+dir+"\".");
-	str.erase(0,1);
+		throw std::runtime_error("Expected \"<\", \"<>\", or \">\" after local address.");
+	if(dir!="<>"&&dir.substr(0,1)!="<"&&dir.substr(0,1)!=">")
+		throw std::runtime_error("Expected \"<\", \"<>\", or \">\" got \""+dir+"\".");
+	if(dir!="<>")
+		dir=dir.substr(0,1);
+	str.erase(0,dir.size());
 	return dir;
 }
 
 static inline std::string parse_action(std::string& str)
 {
 	str=strip_start(str);
-	std::string action(parse_block(str));
+	std::string action(parse_string(str));
 	if(action=="")
 		throw std::runtime_error("Expected action after to IP address.");
 	if(to_lower(action)!="pass"&&to_lower(action)!="deny")
@@ -388,34 +409,35 @@ int main()
 		std::string temp;
 		while(true)
 			if(getline(std::cin,temp))
-				lines.push_back(temp);
+				lines.push_back(split(strip(temp),"#")[0]);
 			else if(std::cin.eof())
 				break;
 			else
 				throw std::runtime_error("Error");
+
+		std::string output(pre_rules()+"\n");
 		for(lineno=0;lineno<lines.size();++lineno)
-			if(split(strip(lines[lineno]),"#")[0].size()>0)
+			if(lines[lineno].size()>0)
 			{
+				bool was_any=false;
 				std::string proto(parse_proto(lines[lineno]));
 				bool l_v6=false;
-				std::string l_ip(parse_ip(lines[lineno],l_v6,"after proto"));
-				std::string l_mask(parse_subnet_mask(lines[lineno],l_v6));
+				std::string l_ip(parse_ip(lines[lineno],was_any,l_v6,"after proto"));
+				std::string l_mask(parse_subnet_mask(lines[lineno],was_any,l_v6));
 				std::string l_port(parse_port(lines[lineno]));
 				std::string dir(parse_dir(lines[lineno]));
 				bool f_v6=false;
-				std::string f_ip(parse_ip(lines[lineno],f_v6,"after direction"));
+				std::string f_ip(parse_ip(lines[lineno],was_any,f_v6,"after direction"));
 				if(l_v6!=f_v6)
 					throw std::runtime_error("Local \""+l_ip+"\" and foreign \""+f_ip+
 						"\" addresses must be of the same version.");
-				std::string f_mask(parse_subnet_mask(lines[lineno],f_v6));
+				std::string f_mask(parse_subnet_mask(lines[lineno],was_any,f_v6));
 				std::string f_port(parse_port(lines[lineno]));
 				std::string action(parse_action(lines[lineno]));
-				std::cout<<proto;
-				std::cout<<" "<<l_ip+"/"+l_mask+":"+l_port;
-				std::cout<<dir;
-				std::cout<<f_ip+"/"+f_mask+":"+f_port;
-				std::cout<<" "<<action<<std::endl;
+				output+=gen_rule(proto,l_ip,l_mask,l_port,dir,f_ip,
+					f_mask,f_port,action,(l_v6||f_v6))+"\n";
 			}
+		std::cout<<output<<std::flush;
 	}
 	catch(std::exception& error)
 	{

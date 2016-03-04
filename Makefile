@@ -2,9 +2,9 @@ CXX=g++
 OPTS=-O
 CFLAGS=$(OPTS) -Wall
 
-all: wof
+all: wof_iptables
 
-wof: wof.cpp
+wof_iptables: wof.cpp iptables.cpp
 	$(CXX) $(CFLAGS) $^ -o $@
 clean:
-	- rm -f wof wof.exe
+	- rm -f wof_iptables wof_iptables.exe
