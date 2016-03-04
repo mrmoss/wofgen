@@ -371,7 +371,7 @@ static inline std::string parse_dir(std::string& str)
 static inline std::string parse_action(std::string& str)
 {
 	str=strip_start(str);
-	std::string action(parse_block(str));
+	std::string action(parse_string(str));
 	if(action=="")
 		throw std::runtime_error("Expected action after to IP address.");
 	if(to_lower(action)!="pass"&&to_lower(action)!="deny")
@@ -388,13 +388,13 @@ int main()
 		std::string temp;
 		while(true)
 			if(getline(std::cin,temp))
-				lines.push_back(temp);
+				lines.push_back(split(strip(temp),"#")[0]);
 			else if(std::cin.eof())
 				break;
 			else
 				throw std::runtime_error("Error");
 		for(lineno=0;lineno<lines.size();++lineno)
-			if(split(strip(lines[lineno]),"#")[0].size()>0)
+			if(lines[lineno].size()>0)
 			{
 				std::string proto(parse_proto(lines[lineno]));
 				bool l_v6=false;
