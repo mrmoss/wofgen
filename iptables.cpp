@@ -61,5 +61,3 @@ std::string gen_rule(const std::string& proto,
 		rule+="ACCEPT";
 	return rule;
 }
-
-//iptables --append INPUT  -p tcp -d any --dport 20 -s any --sport any --jump ACCEPT
