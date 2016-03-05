@@ -21,16 +21,6 @@ std::string gen_rule(const std::string& proto,
 	const std::string& action,
 	const bool V6)
 {
-
-	if(dir=="<>")
-	{
-		std::string rules;
-		rules+=gen_rule(proto,l_ip,l_mask,l_port,"<",f_ip,f_mask,f_port,action,V6);
-		rules+="\n";
-		rules+=gen_rule(proto,l_ip,l_mask,l_port,">",f_ip,f_mask,f_port,action,V6);
-		return rules;
-	}
-
 	std::string rule;
 	if(V6)
 		rule+="ip6tables";

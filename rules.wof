@@ -2,6 +2,5 @@ tcp any>any:80 pass
 tcp any>any:443 pass
 tcp any>any:21 pass
 tcp any>any:22 pass
-udp any<>8.8.8.8:53 pass
-udp any:68<any:67 pass
-udp any:68>any:67 pass
+udp any>8.8.8.8:53 pass
+udp any:68<>any:67 pass

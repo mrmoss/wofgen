@@ -434,8 +434,18 @@ int main()
 				std::string f_mask(parse_subnet_mask(lines[lineno],was_any,f_v6));
 				std::string f_port(parse_port(lines[lineno]));
 				std::string action(parse_action(lines[lineno]));
-				output+=gen_rule(proto,l_ip,l_mask,l_port,dir,f_ip,
-					f_mask,f_port,action,(l_v6||f_v6))+"\n";
+				if(dir=="<>")
+				{
+					output+=gen_rule(proto,l_ip,l_mask,l_port,"<",f_ip,
+						f_mask,f_port,action,(l_v6||f_v6))+"\n";
+					output+=gen_rule(proto,l_ip,l_mask,l_port,">",f_ip,
+						f_mask,f_port,action,(l_v6||f_v6))+"\n";
+				}
+				else
+				{
+					output+=gen_rule(proto,l_ip,l_mask,l_port,dir,f_ip,
+						f_mask,f_port,action,(l_v6||f_v6))+"\n";
+				}
 			}
 		std::cout<<output<<std::flush;
 	}
