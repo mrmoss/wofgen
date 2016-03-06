@@ -13,11 +13,11 @@ static size_t rule_num=0;
 std::string pre_rules()
 {
 	std::string pre;
+	pre+="netsh advfirewall firewall set rule name=all new enable=no\n";
+	pre+="netsh advfirewall firewall delete rule name=all\n";
 	pre+="netsh advfirewall set all state on\n";
 	pre+="netsh advfirewall set all firewallpolicy blockinboundalways,blockoutbound\n";
-	pre+="netsh firewall set logging %homepath%\\wof_log.txt 4096 enable enable\n";
-	pre+="netsh firewall set notifications enable all\n";
-	pre+="netsh advfirewall firewall set rule name=all new enable=no\n";
+	pre+="netsh advfirewall set all logging filename \"C:\\wof.log\"\n";
 	return pre;
 }
 
@@ -30,7 +30,7 @@ std::string gen_rule(const std::string& proto,
 {
 	std::string rule;
 	rule+="netsh advfirewall firewall add rule";
-	rule+=" name="+to_string(rule_num);
+	rule+=" name=\""+to_string(rule_num++)+"\"";
 	if(dir=="<")
 		rule+=" dir=in ";
 	else
@@ -40,8 +40,16 @@ std::string gen_rule(const std::string& proto,
 	else
 		rule+=" action=allow";
 	rule+=" protocol="+proto;
-	rule+=" localip="+l_ip+"/"+l_mask;
-	rule+=" remoteip="+f_ip+"/"+f_mask;
+	rule+=" localip=";
+	if(l_mask!="0")
+		rule+=l_ip+"/"+l_mask;
+	else
+		rule+="any";
+	rule+=" remoteip=";
+	if(f_mask!="0")
+		rule+=f_ip+"/"+f_mask;
+	else
+		rule+="any";
 	if(l_port!="0")
 		rule+=" localport="+l_port;
 	if(f_port!="0")
