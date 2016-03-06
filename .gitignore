@@ -4,3 +4,5 @@ wof_netsh
 wof_netsh.exe
 wof_pf
 wof_pf.exe
+wof_ufw
+wof_ufw.exe
