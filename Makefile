@@ -2,7 +2,7 @@ CXX=g++
 OPTS=-O
 CFLAGS=$(OPTS) -Wall
 
-all: wof_iptables wof_netsh wof_pf wof_ufw
+all: wof_iptables wof_netsh wof_pf wof_ufw wof_ipfw
 
 wof_iptables: wof.cpp iptables.cpp
 	$(CXX) $(CFLAGS) $^ -o $@
@@ -16,8 +16,12 @@ wof_pf: wof.cpp pf.cpp
 wof_ufw: wof.cpp ufw.cpp
 	$(CXX) $(CFLAGS) $^ -o $@
 
+wof_ipfw: wof.cpp ipfw.cpp
+	$(CXX) $(CFLAGS) $^ -o $@
+
 clean:
 	- rm -f wof_iptables wof_iptables.exe
 	- rm -f wof_netsh wof_netsh.exe
 	- rm -f wof_pf wof_pf.exe
 	- rm -f wof_ufw wof_ufw.exe
+	- rm -f wof_ipfw wof_ipfw.exe
