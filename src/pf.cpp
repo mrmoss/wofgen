@@ -12,8 +12,8 @@ std::string pre_rules(std::string def_out,std::string def_in)
 		def_in="pass ";
 	std::string pre;
 	pre+="set skip on lo0\n";
-	pre+=def_in+" out log all\n";
-	pre+=def_out+" in  log all\n";
+	pre+=def_out+" out log all\n";
+	pre+=def_in+" in  log all\n";
 	return pre;
 }
 
