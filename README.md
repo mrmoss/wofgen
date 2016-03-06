@@ -8,8 +8,6 @@ Syntax:
 
 	tcp/udp local_address/mask:local_port direction remote_address/mask:remote_port pass/deny
 
-Current default option is deny (incoming and outgoing, need to add syntax to set this).
-
 Enables established related on incoming ports (allow out what you allowed in).
 
 Zero dependencies (other than a C++ compiler and the C++ STL).

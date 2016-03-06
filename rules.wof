@@ -1,3 +1,6 @@
+#Default Action
+default <> deny
+
 #DHCP Client
 udp any:68<>any:67 pass
 

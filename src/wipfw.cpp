@@ -1,15 +1,19 @@
 #include <string>
 
-std::string pre_rules()
+std::string pre_rules(std::string def_out,std::string def_in)
 {
 	std::string pre;
 	pre+="-q -f flush\n";
 	pre+="-q add check-state\n";
 	pre+="-q add allow ip from any to any via lo0\n";
+	if(def_out=="pass")
+		pre+="-q add allow all from any to any out keep-state\n";
+	if(def_in=="pass")
+		pre+="-q add allow all from any to any inkeep-state\n";
 	return pre;
 }
 
-std::string post_rules()
+std::string post_rules(std::string def_out,std::string def_in)
 {
 	return "-q add deny log ip from any to any\n";
 }

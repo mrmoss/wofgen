@@ -6,8 +6,8 @@
 #include <string>
 #include <vector>
 
-extern std::string pre_rules();
-extern std::string post_rules();
+extern std::string pre_rules(std::string def_out,std::string def_in);
+extern std::string post_rules(std::string def_out,std::string def_in);
 
 extern std::string gen_rule(std::string proto,
 	std::string l_ip,std::string l_mask,std::string l_port,
@@ -373,7 +373,7 @@ static inline std::string parse_port(std::string& str)
 	return port;
 }
 
-static inline std::string parse_dir(std::string& str)
+static inline std::string parse_dir(std::string& str,const std::string& err)
 {
 	str=strip_start(str);
 	std::string dir(str.substr(0,2));
@@ -382,7 +382,7 @@ static inline std::string parse_dir(std::string& str)
 	if(dir.size()>0&&ispunct(dir[0])==0)
 		dir="";
 	if(dir=="")
-		throw std::runtime_error("Expected \"<\", \"<>\", or \">\" after local address.");
+		throw std::runtime_error("Expected \"<\", \"<>\", or \">\" "+err+".");
 	if(dir!="<>"&&dir.substr(0,1)!="<"&&dir.substr(0,1)!=">")
 		throw std::runtime_error("Expected \"<\", \"<>\", or \">\" got \""+dir+"\".");
 	if(dir!="<>")
@@ -391,15 +391,35 @@ static inline std::string parse_dir(std::string& str)
 	return dir;
 }
 
-static inline std::string parse_action(std::string& str)
+static inline std::string parse_action(std::string& str,const std::string& err)
 {
 	str=strip_start(str);
 	std::string action(parse_string(str));
 	if(action=="")
-		throw std::runtime_error("Expected action after to IP address.");
+		throw std::runtime_error("Expected action "+err+".");
 	if(to_lower(action)!="pass"&&to_lower(action)!="deny")
 		throw std::runtime_error("Expected \"pass\" or \"deny\" got \""+action+"\".");
 	return to_lower(action);
+}
+
+static inline bool parse_def(std::string& str,std::string& def_out,std::string& def_in)
+{
+	std::string match("default");
+	if(str.substr(0,match.size())==match)
+	{
+		str.erase(0,match.size());
+		str=strip_start(str);
+		std::string dir(parse_dir(str,"in default rule"));
+		std::string action(parse_action(str,"in default rule"));
+		if(dir=="<")
+			def_in=action;
+		else if(dir==">")
+			def_out=action;
+		else if(dir=="<>")
+			def_in=def_out=action;
+		return true;
+	}
+	return false;
 }
 
 int main(int argc,char* argv[])
@@ -425,40 +445,46 @@ int main(int argc,char* argv[])
 				break;
 
 		fstr.close();
-		std::string output(pre_rules()+"\n");
+		std::string def_out("deny");
+		std::string def_in("deny");
+		std::string output;
 		for(lineno=0;lineno<lines.size();++lineno)
 			if(lines[lineno].size()>0)
 			{
-				bool was_any=false;
-				std::string proto(parse_proto(lines[lineno]));
-				bool l_v6=false;
-				std::string l_ip(parse_ip(lines[lineno],was_any,l_v6,"after proto"));
-				std::string l_mask(parse_subnet_mask(lines[lineno],was_any,l_v6));
-				std::string l_port(parse_port(lines[lineno]));
-				std::string dir(parse_dir(lines[lineno]));
-				bool f_v6=false;
-				std::string f_ip(parse_ip(lines[lineno],was_any,f_v6,"after direction"));
-				if(l_v6!=f_v6)
-					throw std::runtime_error("Local \""+l_ip+"\" and foreign \""+f_ip+
-						"\" addresses must be of the same version.");
-				std::string f_mask(parse_subnet_mask(lines[lineno],was_any,f_v6));
-				std::string f_port(parse_port(lines[lineno]));
-				std::string action(parse_action(lines[lineno]));
-				if(dir=="<>")
+				if(!parse_def(lines[lineno],def_out,def_in))
 				{
-					output+=gen_rule(proto,l_ip,l_mask,l_port,"<",f_ip,
-						f_mask,f_port,action,(l_v6||f_v6))+"\n";
-					output+=gen_rule(proto,l_ip,l_mask,l_port,">",f_ip,
-						f_mask,f_port,action,(l_v6||f_v6))+"\n";
-				}
-				else
-				{
-					output+=gen_rule(proto,l_ip,l_mask,l_port,dir,f_ip,
-						f_mask,f_port,action,(l_v6||f_v6))+"\n";
+					bool was_any=false;
+					std::string proto(parse_proto(lines[lineno]));
+					bool l_v6=false;
+					std::string l_ip(parse_ip(lines[lineno],was_any,l_v6,"after proto"));
+					std::string l_mask(parse_subnet_mask(lines[lineno],was_any,l_v6));
+					std::string l_port(parse_port(lines[lineno]));
+					std::string dir(parse_dir(lines[lineno],"after local address"));
+					bool f_v6=false;
+					std::string f_ip(parse_ip(lines[lineno],was_any,f_v6,"after direction"));
+					if(l_v6!=f_v6)
+						throw std::runtime_error("Local \""+l_ip+"\" and foreign \""+f_ip+
+							"\" addresses must be of the same version.");
+					std::string f_mask(parse_subnet_mask(lines[lineno],was_any,f_v6));
+					std::string f_port(parse_port(lines[lineno]));
+					std::string action(parse_action(lines[lineno],"after to IP address"));
+					if(dir=="<>")
+					{
+						output+=gen_rule(proto,l_ip,l_mask,l_port,"<",f_ip,
+							f_mask,f_port,action,(l_v6||f_v6))+"\n";
+						output+=gen_rule(proto,l_ip,l_mask,l_port,">",f_ip,
+							f_mask,f_port,action,(l_v6||f_v6))+"\n";
+					}
+					else
+					{
+						output+=gen_rule(proto,l_ip,l_mask,l_port,dir,f_ip,
+							f_mask,f_port,action,(l_v6||f_v6))+"\n";
+					}
 				}
 			}
-		output+="\n"+post_rules();
+		std::cout<<pre_rules(def_out,def_in)<<std::flush;
 		std::cout<<output<<std::flush;
+		std::cout<<post_rules(def_out,def_in)<<std::flush;
 	}
 	catch(std::exception& error)
 	{

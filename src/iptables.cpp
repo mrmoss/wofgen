@@ -1,24 +1,32 @@
 #include <string>
 
-std::string pre_rules()
+std::string pre_rules(std::string def_out,std::string def_in)
 {
+	if(def_out=="deny")
+		def_out="DROP  ";
+	else
+		def_out="ACCEPT";
+	if(def_in=="deny")
+		def_in="DROP  ";
+	else
+		def_in="ACCEPT";
 	std::string pre;
 	pre+="iptables -F\n";
 	pre+="ip6tables -F\n";
 	pre+="iptables -X\n";
 	pre+="ip6tables -X\n";
-	pre+="iptables -P INPUT DROP\n";
-	pre+="ip6tables -P INPUT DROP\n";
 	pre+="iptables -P FORWARD DROP\n";
 	pre+="ip6tables -P FORWARD DROP\n";
-	pre+="iptables -P OUTPUT DROP\n";
-	pre+="ip6tables -P OUTPUT DROP\n";
+	pre+="iptables -P OUTPUT "+def_out+"\n";
+	pre+="ip6tables -P OUTPUT "+def_out+"\n";
+	pre+="iptables -P INPUT "+def_in+"\n";
+	pre+="ip6tables -P INPUT "+def_in+"\n";
 	pre+="iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT\n";
 	pre+="ip6tables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT\n";
 	return pre;
 }
 
-std::string post_rules()
+std::string post_rules(std::string def_out,std::string def_in)
 {
 	std::string post;
 	post+="iptables -N LOGGING\n";

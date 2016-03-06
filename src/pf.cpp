@@ -1,15 +1,23 @@
 #include <string>
 
-std::string pre_rules()
+std::string pre_rules(std::string def_out,std::string def_in)
 {
+	if(def_out=="deny")
+		def_out="block";
+	else
+		def_out="pass ";
+	if(def_in=="deny")
+		def_in="block";
+	else
+		def_in="pass ";
 	std::string pre;
 	pre+="set skip on lo0\n";
-	pre+="block in  log all\n";
-	pre+="block out log all\n";
+	pre+=def_in+" out log all\n";
+	pre+=def_out+" in  log all\n";
 	return pre;
 }
 
-std::string post_rules()
+std::string post_rules(std::string def_out,std::string def_in)
 {
 	return "";
 }

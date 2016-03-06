@@ -1,6 +1,6 @@
 #include <string>
 
-std::string pre_rules()
+std::string pre_rules(std::string def_out,std::string def_in)
 {
 	std::string pre;
 	pre+="#You may need to add the following to /etc/pf.conf:\n";
@@ -10,10 +10,14 @@ std::string pre_rules()
 	pre+="ipfw -q -f flush\n";
 	pre+="ipfw -q add check-state\n";
 	pre+="ipfw -q add allow ip from any to any via lo0\n";
+	if(def_out=="pass")
+		pre+="ipfw -q add allow all from any to any out keep-state\n";
+	if(def_in=="pass")
+		pre+="ipfw -q add allow all from any to any inkeep-state\n";
 	return pre;
 }
 
-std::string post_rules()
+std::string post_rules(std::string def_out,std::string def_in)
 {
 	return "ipfw -q add deny log ip from any to any\n";
 }

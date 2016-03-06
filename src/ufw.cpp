@@ -1,17 +1,17 @@
 #include <string>
 
-std::string pre_rules()
+std::string pre_rules(std::string def_out,std::string def_in)
 {
 	std::string pre;
 	pre+="ufw --force disable\n";
 	pre+="ufw --force reset\n";
 	pre+="ufw logging on\n";
-	pre+="ufw default deny incoming\n";
-	pre+="ufw default deny outgoing\n";
+	pre+="ufw default "+def_out+" outgoing\n";
+	pre+="ufw default "+def_in+" incoming\n";
 	return pre;
 }
 
-std::string post_rules()
+std::string post_rules(std::string def_out,std::string def_in)
 {
 	return "ufw --force enable\n";
 }
