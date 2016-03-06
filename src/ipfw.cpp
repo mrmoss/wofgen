@@ -13,7 +13,7 @@ std::string pre_rules(std::string def_out,std::string def_in)
 	if(def_out=="pass")
 		pre+="ipfw -q add allow all from any to any out keep-state\n";
 	if(def_in=="pass")
-		pre+="ipfw -q add allow all from any to any inkeep-state\n";
+		pre+="ipfw -q add allow all from any to any in keep-state\n";
 	return pre;
 }
 
