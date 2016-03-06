@@ -1,25 +1,25 @@
-#DHCP
+#DHCP Client
 udp any:68<>any:67 pass
 
-#DNS
+#DNS Client
 udp any>8.8.8.8:53 pass
 
-#FTP
+#FTP Client
 tcp any>any:21 pass
 
-#NTP
+#NTP Client
 udp any>216.239.32.15:123 pass
 
-#Printers
+#Printer Client
 tcp any>any:631  pass
 tcp any>any:9100 pass
 
-#SSH
+#SSH Client
 tcp any>any:22 pass
 
-#WEB
+#WEB Client
 tcp any>any:80 pass
 tcp any>any:443 pass
 
-#WHOIS
+#WHOIS Client
 tcp any>any:43 pass
