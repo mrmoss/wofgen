@@ -1,6 +1,25 @@
+#DHCP
+udp any:68<>any:67 pass
+
+#DNS
+udp any>8.8.8.8:53 pass
+
+#FTP
+tcp any>any:21 pass
+
+#NTP
+udp any>216.239.32.15:123 pass
+
+#Printers
+tcp any>any:631  pass
+tcp any>any:9100 pass
+
+#SSH
+tcp any>any:22 pass
+
+#WEB
 tcp any>any:80 pass
 tcp any>any:443 pass
-tcp any>any:21 pass
-tcp any>any:22 pass
-udp any>8.8.8.8:53 pass
-udp any:68<>any:67 pass
+
+#WHOIS
+tcp any>any:43 pass

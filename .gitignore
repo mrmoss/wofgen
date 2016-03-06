@@ -2,3 +2,5 @@ wof_iptables
 wof_iptables.exe
 wof_netsh
 wof_netsh.exe
+wof_pf
+wof_pf.exe

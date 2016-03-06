@@ -4,22 +4,31 @@ std::string pre_rules()
 {
 	std::string pre;
 	pre+="iptables -F\n";
+	pre+="ip6tables -F\n";
 	pre+="iptables -X\n";
-	pre+="\n";
+	pre+="ip6tables -X\n";
 	pre+="iptables -P INPUT DROP\n";
+	pre+="ip6tables -P INPUT DROP\n";
 	pre+="iptables -P FORWARD DROP\n";
+	pre+="ip6tables -P FORWARD DROP\n";
 	pre+="iptables -P OUTPUT DROP\n";
-	pre+="\n";
+	pre+="ip6tables -P OUTPUT DROP\n";
 	pre+="iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT\n";
+	pre+="ip6tables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT\n";
 	return pre;
 }
 
-std::string gen_rule(const std::string& proto,
-	const std::string& l_ip,const std::string& l_mask,const std::string& l_port,
-	const std::string& dir,
-	const std::string& f_ip,const std::string& f_mask,const std::string& f_port,
-	const std::string& action,
-	const bool V6)
+std::string post_rules()
+{
+	return "";
+}
+
+std::string gen_rule(std::string proto,
+	std::string l_ip,std::string l_mask,std::string l_port,
+	std::string dir,
+	std::string f_ip,std::string f_mask,std::string f_port,
+	std::string action,
+	bool V6)
 {
 	std::string rule;
 	if(V6)
@@ -27,15 +36,15 @@ std::string gen_rule(const std::string& proto,
 	else
 		rule+="iptables";
 	rule+=" --append ";
+	std::string dir_str="OUTPUT";
 	std::string l_letter="s";
 	std::string f_letter="d";
 	if(dir=="<")
 	{
-		rule+="INPUT ";
+		dir_str="INPUT ";
 		std::swap(l_letter,f_letter);
 	}
-	else
-		rule+="OUTPUT";
+	rule+=dir_str;
 	rule+=" -p "+proto;
 	rule+=" -" +l_letter+" "    +l_ip+"/"+l_mask;
 

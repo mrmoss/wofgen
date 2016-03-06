@@ -21,12 +21,18 @@ std::string pre_rules()
 	return pre;
 }
 
-std::string gen_rule(const std::string& proto,
-	const std::string& l_ip,const std::string& l_mask,const std::string& l_port,
-	const std::string& dir,
-	const std::string& f_ip,const std::string& f_mask,const std::string& f_port,
-	const std::string& action,
-	const bool V6)
+std::string post_rules()
+{
+	rule_num=0;
+	return "";
+}
+
+std::string gen_rule(std::string proto,
+	std::string l_ip,std::string l_mask,std::string l_port,
+	std::string dir,
+	std::string f_ip,std::string f_mask,std::string f_port,
+	std::string action,
+	bool V6)
 {
 	std::string rule;
 	rule+="netsh advfirewall firewall add rule";

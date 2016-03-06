@@ -6,13 +6,14 @@
 #include <vector>
 
 extern std::string pre_rules();
+extern std::string post_rules();
 
-extern std::string gen_rule(const std::string& proto,
-	const std::string& l_ip,const std::string& l_mask,const std::string& l_port,
-	const std::string& dir,
-	const std::string& f_ip,const std::string& f_mask,const std::string& f_port,
-	const std::string& action,
-	const bool V6);
+extern std::string gen_rule(std::string proto,
+	std::string l_ip,std::string l_mask,std::string l_port,
+	std::string dir,
+	std::string f_ip,std::string f_mask,std::string f_port,
+	std::string action,
+	bool V6);
 
 static inline int ishexdigit(int c)
 {
@@ -447,6 +448,7 @@ int main()
 						f_mask,f_port,action,(l_v6||f_v6))+"\n";
 				}
 			}
+		output+="\n"+post_rules();
 		std::cout<<output<<std::flush;
 	}
 	catch(std::exception& error)
