@@ -1,1 +1,10 @@
-bin
+bin/wof_ipfw
+bin/wof_ipfw.exe
+bin/wof_iptables
+bin/wof_iptables.exe
+bin/wof_netsh
+bin/wof_netsh.exe
+bin/wof_pf
+bin/wof_pf.exe
+bin/wof_ufw
+bin/wof_ufw.exe
