@@ -4,8 +4,8 @@ std::string pre_rules()
 {
 	std::string pre;
 	pre+="set skip on lo0\n";
-	pre+="block in  all\n";
-	pre+="block out all\n";
+	pre+="block in  log all\n";
+	pre+="block out log all\n";
 	return pre;
 }
 
@@ -35,7 +35,12 @@ std::string gen_rule(std::string proto,
 		std::swap(l_port,f_port);
 	}
 	rule+=dir_str;
-	rule+=" proto "+proto;
+	rule+=" log ";
+	if(V6)
+		rule+="inet6 ";
+	else
+		rule+="inet  ";
+	rule+="proto "+proto;
 	rule+=" from "+l_ip+"/"+l_mask;
 	if(l_port!="0")
 		rule+=" port "+l_port;

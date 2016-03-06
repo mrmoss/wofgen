@@ -3,19 +3,15 @@
 std::string pre_rules()
 {
 	std::string pre;
-	pre+="#You may need to add the following to /etc/pf.conf:\n";
-	pre+="#  firewall_enable=\"YES\"\n";
-	pre+="#  firewall_logging=\"YES\"\n";
-	pre+="service ipfw start\n";
-	pre+="ipfw -q -f flush\n";
-	pre+="ipfw -q add check-state\n";
-	pre+="ipfw -q add allow ip from any to any via lo0\n";
+	pre+="-q -f flush\n";
+	pre+="-q add check-state\n";
+	pre+="-q add allow ip from any to any via lo0\n";
 	return pre;
 }
 
 std::string post_rules()
 {
-	return "ipfw -q add deny log ip from any to any\n";
+	return "-q add deny log ip from any to any\n";
 }
 
 std::string gen_rule(std::string proto,
@@ -26,7 +22,7 @@ std::string gen_rule(std::string proto,
 	bool V6)
 {
 	std::string rule;
-	rule+="ipfw -q add ";
+	rule+="-q add ";
 	if(action=="deny")
 		rule+="deny";
 	else

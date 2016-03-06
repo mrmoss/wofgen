@@ -1,6 +1,6 @@
 Walls of Fire - Universal firewall configuration generator.
 
-Ever get tired of trying to remember how to use ipfw, iptables, netsh, ipf/pf, ufw, etc...?
+Ever get tired of trying to remember how to use ipfw, iptables, netsh, ipf/pf, ufw, wipfw, etc...?
 
 Instead of trying to remember, learn the wof "simple syntax" and generate all of them:
 
@@ -14,9 +14,9 @@ Enables established related on incoming ports (allow out what you allowed in).
 
 Zero dependencies (other than a C++ compiler and the C++ STL).
 
-Eveything but the ipf/pf cranks out commands that can be run in a terminal.
+Eveything but ipf/pf and wipfw cranks out commands that can be run in a terminal.
 
-Sadly, ipf/pf requires the use of a configuration file, so that is generated instead.
+Sadly, ipf/pf and wipfw require the use of a configuration file, so that is generated instead.
 
 Example Configuration Lines:
 

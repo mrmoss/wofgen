@@ -20,7 +20,18 @@ std::string pre_rules()
 
 std::string post_rules()
 {
-	return "";
+	std::string post;
+	post+="iptables -N LOGGING\n";
+	post+="ip6tables -N LOGGING\n";
+	post+="iptables -A INPUT -j LOGGING\n";
+	post+="ip6tables -A INPUT -j LOGGING\n";
+	post+="iptables -A OUTPUT -j LOGGING\n";
+	post+="ip6tables -A OUTPUT -j LOGGING\n";
+	post+="iptables -A LOGGING -m limit --limit 2/min -j LOG --log-prefix \"iptables-drop: \" --log-level 4\n";
+	post+="ip6tables -A LOGGING -m limit --limit 2/min -j LOG --log-prefix \"ip6tables-drop: \" --log-level 4\n";
+	post+="iptables -A LOGGING -j DROP\n";
+	post+="ip6tables -A LOGGING -j DROP\n";
+	return post;
 }
 
 std::string gen_rule(std::string proto,

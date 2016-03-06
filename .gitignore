@@ -8,3 +8,5 @@ bin/wof_pf
 bin/wof_pf.exe
 bin/wof_ufw
 bin/wof_ufw.exe
+bin/wof_wipfw
+bin/wof_wipfw.exe
