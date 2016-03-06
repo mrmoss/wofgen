@@ -18,7 +18,7 @@ Eveything but the ipf/pf cranks out commands that can be run in a terminal.
 
 Sadly, ipf/pf requires the use of a configuration file, so that is generated instead.
 
-Examples:
+Example Configuration Lines:
 
 	#DHCP Client (<> is both ways)
 	udp any:68<>any:67 pass
@@ -32,3 +32,14 @@ Examples:
 
 	#SSH Server
 	tcp any<any:22 pass
+
+Example Usage:
+
+	#Universal
+	bin/wof_iptables rules.wof
+
+	#Unix/Cygwin
+	cat rules.wof|bin/wof_ipfw
+
+	#Windows
+	type rules.wof|bin\wof_netsh

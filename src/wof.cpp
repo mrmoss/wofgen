@@ -1,4 +1,5 @@
 #include <cctype>
+#include <fstream>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
@@ -401,21 +402,29 @@ static inline std::string parse_action(std::string& str)
 	return to_lower(action);
 }
 
-int main()
+int main(int argc,char* argv[])
 {
+	std::istream* istr=&std::cin;
+	std::ifstream fstr;
 	size_t lineno=0;
 	try
 	{
+		if(argc>1)
+		{
+			fstr.open(argv[1]);
+			if(!fstr)
+				throw std::runtime_error("Could not open file \""+std::string(argv[1])+"\".");
+			istr=&fstr;
+		}
 		std::vector<std::string> lines;
 		std::string temp;
 		while(true)
-			if(getline(std::cin,temp))
+			if(getline(*istr,temp))
 				lines.push_back(split(strip(temp),"#")[0]);
-			else if(std::cin.eof())
-				break;
 			else
-				throw std::runtime_error("Error");
+				break;
 
+		fstr.close();
 		std::string output(pre_rules()+"\n");
 		for(lineno=0;lineno<lines.size();++lineno)
 			if(lines[lineno].size()>0)
