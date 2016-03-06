@@ -3,11 +3,11 @@
 std::string pre_rules(std::string def_out,std::string def_in)
 {
 	if(def_out=="deny")
-		def_out="DROP  ";
+		def_out="DROP";
 	else
 		def_out="ACCEPT";
 	if(def_in=="deny")
-		def_in="DROP  ";
+		def_in="DROP";
 	else
 		def_in="ACCEPT";
 	std::string pre;
@@ -28,17 +28,31 @@ std::string pre_rules(std::string def_out,std::string def_in)
 
 std::string post_rules(std::string def_out,std::string def_in)
 {
+	if(def_out=="deny")
+		def_out="DROP";
+	else
+		def_out="ACCEPT";
+	if(def_in=="deny")
+		def_in="DROP";
+	else
+		def_in="ACCEPT";
 	std::string post;
-	post+="iptables -N LOGGING\n";
-	post+="ip6tables -N LOGGING\n";
-	post+="iptables -A INPUT -j LOGGING\n";
-	post+="ip6tables -A INPUT -j LOGGING\n";
-	post+="iptables -A OUTPUT -j LOGGING\n";
-	post+="ip6tables -A OUTPUT -j LOGGING\n";
-	post+="iptables -A LOGGING -m limit --limit 2/min -j LOG --log-prefix \"iptables-drop: \" --log-level 4\n";
-	post+="ip6tables -A LOGGING -m limit --limit 2/min -j LOG --log-prefix \"ip6tables-drop: \" --log-level 4\n";
-	post+="iptables -A LOGGING -j DROP\n";
-	post+="ip6tables -A LOGGING -j DROP\n";
+	post+="iptables -N LOG_OUT\n";
+	post+="ip6tables -N LOG_OUT\n";
+	post+="iptables -N LOG_IN\n";
+	post+="ip6tables -N LOG_IN\n";
+	post+="iptables -A OUTPUT -j LOG_OUT\n";
+	post+="ip6tables -A OUTPUT -j LOG_OUT\n";
+	post+="iptables -A INPUT -j LOG_IN\n";
+	post+="ip6tables -A INPUT -j LOG_IN\n";
+	post+="iptables -A LOG_OUT -m limit --limit 2/min -j LOG --log-prefix \"iptables-out: \" --log-level 4\n";
+	post+="ip6tables -A LOG_OUT -m limit --limit 2/min -j LOG --log-prefix \"ip6tables-out: \" --log-level 4\n";
+	post+="iptables -A LOG_IN -m limit --limit 2/min -j LOG --log-prefix \"iptables-in: \" --log-level 4\n";
+	post+="ip6tables -A LOG_IN -m limit --limit 2/min -j LOG --log-prefix \"ip6tables-in: \" --log-level 4\n";
+	post+="iptables -A LOG_OUT -j "+def_out+"\n";
+	post+="ip6tables -A LOG_OUT -j "+def_out+"\n";
+	post+="iptables -A LOG_IN -j "+def_in+"\n";
+	post+="ip6tables -A LOG_IN -j "+def_in+"\n";
 	return post;
 }
 
