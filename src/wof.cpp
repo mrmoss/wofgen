@@ -16,6 +16,13 @@ extern std::string gen_rule(std::string proto,
 	std::string action,
 	bool V6);
 
+static inline void show_help(const std::string& bin_name)
+{
+	std::cerr<<std::endl;
+	std::cerr<<"Usage: Rules can be taken in via stdin or from a file (like below)."<<std::endl;
+	std::cerr<<bin_name<<" rules_file"<<std::endl;
+}
+
 static inline int ishexdigit(int c)
 {
 	return (isdigit(c)!=0||(isalpha(c)!=0&&tolower(c)>='a'&&tolower(c)<='f'));
@@ -424,11 +431,14 @@ static inline bool parse_def(std::string& str,std::string& def_out,std::string& 
 
 int main(int argc,char* argv[])
 {
+	std::cerr<<"Walls of Fire"<<std::endl;
+	std::string bin_name="unknown";
 	std::istream* istr=&std::cin;
 	std::ifstream fstr;
-	size_t lineno=0;
+	int lineno=0;
 	try
 	{
+		bin_name=argv[0];
 		if(argc>1)
 		{
 			fstr.open(argv[1]);
@@ -445,8 +455,8 @@ int main(int argc,char* argv[])
 				break;
 
 		fstr.close();
-		std::string def_out("deny");
-		std::string def_in("deny");
+		std::string def_out;
+		std::string def_in;
 		std::string output;
 		for(lineno=0;lineno<lines.size();++lineno)
 			if(lines[lineno].size()>0)
@@ -481,19 +491,37 @@ int main(int argc,char* argv[])
 							f_mask,f_port,action,(l_v6||f_v6))+"\n";
 					}
 				}
+				if(lines[lineno].size()>0)
+					throw std::runtime_error("Unknown string \""+lines[lineno]+"\".");
 			}
-		std::cout<<pre_rules(def_out,def_in)<<std::flush;
+		if(def_out.size()==0&&def_in.size()==0&&output.size()==0)
+		{
+			lineno=-1;
+			throw std::runtime_error("No rules found.");
+		}
+		if(def_out.size()==0)
+			def_out="deny";
+		if(def_in.size()==0)
+			def_in="deny";
+		output=pre_rules(def_out,def_in)+output+post_rules(def_out,def_in);
 		std::cout<<output<<std::flush;
-		std::cout<<post_rules(def_out,def_in)<<std::flush;
 	}
 	catch(std::exception& error)
 	{
-		std::cout<<"Error line "<<lineno+1<<" - "<<error.what()<<std::endl;
+		if(lineno>=0)
+			std::cerr<<"Error line "<<lineno+1<<" - "<<error.what()<<std::endl;
+		else
+			std::cerr<<"Error - "<<error.what()<<std::endl;
+		show_help(bin_name);
 		return 1;
 	}
 	catch(...)
 	{
-		std::cout<<"Error line "<<lineno+1<<" - Unknown exception."<<std::endl;
+		if(lineno>=0)
+			std::cerr<<"Error line "<<lineno+1<<" - Unknown exception."<<std::endl;
+		else
+			std::cerr<<"Error - Unknown exception."<<std::endl;
+		show_help(bin_name);
 		return 1;
 	}
 
