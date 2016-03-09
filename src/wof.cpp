@@ -458,7 +458,7 @@ int main(int argc,char* argv[])
 		std::string def_out;
 		std::string def_in;
 		std::string output;
-		for(lineno=0;lineno<lines.size();++lineno)
+		for(lineno=0;lineno<(int)lines.size();++lineno)
 			if(lines[lineno].size()>0)
 			{
 				if(!parse_def(lines[lineno],def_out,def_in))

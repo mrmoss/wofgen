@@ -3,7 +3,7 @@
 std::string pre_rules(std::string def_out,std::string def_in)
 {
 	std::string pre;
-	pre+="#You may need to add the following to /etc/pf.conf:\n";
+	pre+="#You may need to add the following to /etc/rc.conf:\n";
 	pre+="#  firewall_enable=\"YES\"\n";
 	pre+="#  firewall_logging=\"YES\"\n";
 	pre+="service ipfw start\n";
