@@ -43,7 +43,7 @@ std::string gen_rule(std::string proto,
 		std::swap(l_port,f_port);
 	}
 	rule+=dir_str;
-	rule+=" log ";
+	rule+=" log quick ";
 	if(V6)
 		rule+="inet6 ";
 	else

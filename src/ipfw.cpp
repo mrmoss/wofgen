@@ -35,7 +35,7 @@ std::string gen_rule(std::string proto,
 		rule+="deny";
 	else
 		rule+="allow";
-	rule+=" log ";
+	rule+=" log quick ";
 	std::string dir_str=" out";
 	if(dir=="<")
 	{
