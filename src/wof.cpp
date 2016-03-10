@@ -16,11 +16,24 @@ extern std::string gen_rule(std::string proto,
 	std::string action,
 	bool V6);
 
-static inline void show_help(const std::string& bin_name)
+static inline void show_help()
 {
-	std::cerr<<std::endl;
-	std::cerr<<"Usage: Rules can be taken in via stdin or from a file (like below)."<<std::endl;
-	std::cerr<<bin_name<<" rules_file"<<std::endl;
+	std::string name("PROG");
+	#if(defined(WOF_IPFW))
+		name="ipfw";
+	#elif(defined(WOF_IPTABLES))
+		name="iptables";
+	#elif(defined(WOF_NETSH))
+		name="netsh";
+	#elif(defined(WOF_PF))
+		name="pf";
+	#elif(defined(WOF_UFW))
+		name="ufw";
+	#elif(defined(WOF_WIPFW))
+		name="wipfw";
+	#endif
+	std::cerr<<"  Usage: ./wof_"<<name<<" [FILE]"<<std::endl;
+	std::cerr<<"  If no rules file is provided, rules will be read from stdin."<<std::endl;
 }
 
 static inline int ishexdigit(int c)
@@ -432,13 +445,11 @@ static inline bool parse_def(std::string& str,std::string& def_out,std::string& 
 int main(int argc,char* argv[])
 {
 	std::cerr<<"Walls of Fire"<<std::endl;
-	std::string bin_name="unknown";
 	std::istream* istr=&std::cin;
 	std::ifstream fstr;
 	int lineno=0;
 	try
 	{
-		bin_name=argv[0];
 		if(argc>1)
 		{
 			fstr.open(argv[1]);
@@ -512,7 +523,7 @@ int main(int argc,char* argv[])
 			std::cerr<<"Error line "<<lineno+1<<" - "<<error.what()<<std::endl;
 		else
 			std::cerr<<"Error - "<<error.what()<<std::endl;
-		show_help(bin_name);
+		show_help();
 		return 1;
 	}
 	catch(...)
@@ -521,7 +532,7 @@ int main(int argc,char* argv[])
 			std::cerr<<"Error line "<<lineno+1<<" - Unknown exception."<<std::endl;
 		else
 			std::cerr<<"Error - Unknown exception."<<std::endl;
-		show_help(bin_name);
+		show_help();
 		return 1;
 	}
 
