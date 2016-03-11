@@ -3,25 +3,26 @@ OPTS=-O
 CFLAGS=$(OPTS) -Wall
 SRC=../src
 
+WOF_SRC=$(SRC)/wof.cpp $(SRC)/parser.cpp
 
 all: wof_ipfw wof_iptables wof_netsh wof_pf wof_ufw wof_wipfw
 
-wof_ipfw: $(SRC)/wof.cpp $(SRC)/ipfw.cpp
+wof_ipfw: $(WOF_SRC) $(SRC)/ipfw.cpp
 	$(CXX) $(CFLAGS) $^ -o $@ -D WOF_IPFW
 
-wof_iptables: $(SRC)/wof.cpp $(SRC)/iptables.cpp
+wof_iptables: $(WOF_SRC) $(SRC)/iptables.cpp
 	$(CXX) $(CFLAGS) $^ -o $@ -D WOF_IPTABLES
 
-wof_netsh: $(SRC)/wof.cpp $(SRC)/netsh.cpp
+wof_netsh: $(WOF_SRC) $(SRC)/netsh.cpp
 	$(CXX) $(CFLAGS) $^ -o $@ -D WOF_NETSH
 
-wof_pf: $(SRC)/wof.cpp $(SRC)/pf.cpp
+wof_pf: $(WOF_SRC) $(SRC)/pf.cpp
 	$(CXX) $(CFLAGS) $^ -o $@ -D WOF_PF
 
-wof_ufw: $(SRC)/wof.cpp $(SRC)/ufw.cpp
+wof_ufw: $(WOF_SRC) $(SRC)/ufw.cpp
 	$(CXX) $(CFLAGS) $^ -o $@ -D WOF_UFW
 
-wof_wipfw: $(SRC)/wof.cpp $(SRC)/wipfw.cpp
+wof_wipfw: $(WOF_SRC) $(SRC)/wipfw.cpp
 	$(CXX) $(CFLAGS) $^ -o $@ -D WOF_WIPFW
 
 clean:
