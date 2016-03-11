@@ -3,7 +3,7 @@ OPTS=-O
 CFLAGS=$(OPTS) -Wall
 SRC=../src
 
-WOF_SRC=$(SRC)/wof.cpp $(SRC)/parser.cpp
+WOF_SRC=$(SRC)/main.cpp $(SRC)/parser.cpp
 
 all: wof_ipfw wof_iptables wof_netsh wof_pf wof_ufw wof_wipfw
 
