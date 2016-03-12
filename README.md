@@ -30,10 +30,10 @@ Example Configuration Lines:
 Example Usage:
 
 	#Universal
-	bin/wof_iptables rules.wof
+	bin/wofgen_iptables rules.wof
 
 	#Unix/Cygwin
-	cat rules.wof|bin/wof_ipfw
+	cat rules.wof|bin/wofgen_ipfw
 
 	#Windows
-	type rules.wof|bin\wof_netsh
+	type rules.wof|bin\wofgen_netsh

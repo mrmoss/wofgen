@@ -3,32 +3,32 @@ OPTS=-O
 CFLAGS=$(OPTS) -Wall
 SRC=../src
 
-WOF_SRC=$(SRC)/main.cpp $(SRC)/parser.cpp
+WOFGEN_SRC=$(SRC)/main.cpp $(SRC)/parser.cpp
 
-all: wof_ipfw wof_iptables wof_netsh wof_pf wof_ufw wof_wipfw
+all: wofgen_ipfw wofgen_iptables wofgen_netsh wofgen_pf wofgen_ufw wofgen_wipfw
 
-wof_ipfw: $(WOF_SRC) $(SRC)/ipfw.cpp
-	$(CXX) $(CFLAGS) $^ -o $@ -D WOF_IPFW
+wofgen_ipfw: $(WOFGEN_SRC) $(SRC)/ipfw.cpp
+	$(CXX) $(CFLAGS) $^ -o $@ -D WOFGEN_IPFW
 
-wof_iptables: $(WOF_SRC) $(SRC)/iptables.cpp
-	$(CXX) $(CFLAGS) $^ -o $@ -D WOF_IPTABLES
+wofgen_iptables: $(WOFGEN_SRC) $(SRC)/iptables.cpp
+	$(CXX) $(CFLAGS) $^ -o $@ -D WOFGEN_IPTABLES
 
-wof_netsh: $(WOF_SRC) $(SRC)/netsh.cpp
-	$(CXX) $(CFLAGS) $^ -o $@ -D WOF_NETSH
+wofgen_netsh: $(WOFGEN_SRC) $(SRC)/netsh.cpp
+	$(CXX) $(CFLAGS) $^ -o $@ -D WOFGEN_NETSH
 
-wof_pf: $(WOF_SRC) $(SRC)/pf.cpp
-	$(CXX) $(CFLAGS) $^ -o $@ -D WOF_PF
+wofgen_pf: $(WOFGEN_SRC) $(SRC)/pf.cpp
+	$(CXX) $(CFLAGS) $^ -o $@ -D WOFGEN_PF
 
-wof_ufw: $(WOF_SRC) $(SRC)/ufw.cpp
-	$(CXX) $(CFLAGS) $^ -o $@ -D WOF_UFW
+wofgen_ufw: $(WOFGEN_SRC) $(SRC)/ufw.cpp
+	$(CXX) $(CFLAGS) $^ -o $@ -D WOFGEN_UFW
 
-wof_wipfw: $(WOF_SRC) $(SRC)/wipfw.cpp
-	$(CXX) $(CFLAGS) $^ -o $@ -D WOF_WIPFW
+wofgen_wipfw: $(WOFGEN_SRC) $(SRC)/wipfw.cpp
+	$(CXX) $(CFLAGS) $^ -o $@ -D WOFGEN_WIPFW
 
 clean:
-	- rm -f wof_ipfw wof_ipfw.exe
-	- rm -f wof_iptables wof_iptables.exe
-	- rm -f wof_netsh wof_netsh.exe
-	- rm -f wof_pf wof_pf.exe
-	- rm -f wof_ufw wof_ufw.exe
-	- rm -f wof_wipfw wof_wipfw.exe
+	- rm -f wofgen_ipfw wofgen_ipfw.exe
+	- rm -f wofgen_iptables wofgen_iptables.exe
+	- rm -f wofgen_netsh wofgen_netsh.exe
+	- rm -f wofgen_pf wofgen_pf.exe
+	- rm -f wofgen_ufw wofgen_ufw.exe
+	- rm -f wofgen_wipfw wofgen_wipfw.exe

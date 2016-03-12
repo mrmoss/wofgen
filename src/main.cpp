@@ -11,26 +11,26 @@ extern std::string post_rules(std::string def_out,std::string def_in);
 static inline void show_help()
 {
 	std::string name("PROG");
-	#if(defined(WOF_IPFW))
+	#if(defined(WOFGEN_IPFW))
 		name="ipfw";
-	#elif(defined(WOF_IPTABLES))
+	#elif(defined(WOFGEN_IPTABLES))
 		name="iptables";
-	#elif(defined(WOF_NETSH))
+	#elif(defined(WOFGEN_NETSH))
 		name="netsh";
-	#elif(defined(WOF_PF))
+	#elif(defined(WOFGEN_PF))
 		name="pf";
-	#elif(defined(WOF_UFW))
+	#elif(defined(WOFGEN_UFW))
 		name="ufw";
-	#elif(defined(WOF_WIPFW))
+	#elif(defined(WOFGEN_WIPFW))
 		name="wipfw";
 	#endif
-	std::cerr<<"  Usage: ./wof_"<<name<<" [FILE]"<<std::endl;
+	std::cerr<<"  Usage: ./wofgen_"<<name<<" [FILE]"<<std::endl;
 	std::cerr<<"  If no rules file is provided, rules will be read from stdin."<<std::endl;
 }
 
 int main(int argc,char* argv[])
 {
-	std::cerr<<"Walls of Fire"<<std::endl;
+	std::cerr<<"Walls of Fire - Universal Firewall Generator"<<std::endl;
 	std::istream* istr=&std::cin;
 	std::ifstream fstr;
 	int lineno=0;
