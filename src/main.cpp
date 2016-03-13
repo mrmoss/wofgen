@@ -8,7 +8,7 @@
 extern std::string pre_rules(std::string def_out,std::string def_in);
 extern std::string post_rules(std::string def_out,std::string def_in);
 
-static inline void show_help()
+void show_help()
 {
 	std::string name("PROG");
 	#if(defined(WOFGEN_IPFW))
