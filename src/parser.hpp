@@ -1,5 +1,5 @@
-#ifndef WOF_PARSER_HPP
-#define WOF_PARSER_HPP
+#ifndef PARSER_HPP
+#define PARSER_HPP
 
 #include <string>
 
