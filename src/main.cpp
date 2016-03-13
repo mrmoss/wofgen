@@ -30,7 +30,7 @@ void show_help()
 
 int main(int argc,char* argv[])
 {
-	std::cerr<<"Walls of Fire - Universal Firewall Generator"<<std::endl;
+	std::cerr<<"Walls of Fire - Universal firewall configuration generator."<<std::endl;
 	std::istream* istr=&std::cin;
 	std::ifstream fstr;
 	int lineno=0;
