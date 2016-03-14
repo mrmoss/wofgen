@@ -3,7 +3,7 @@ OPTS=-O
 CFLAGS=$(OPTS) -Wall
 SRC=../src
 
-WOFGEN_SRC=$(SRC)/main.cpp $(SRC)/parser.cpp
+WOFGEN_SRC=$(SRC)/main.cpp $(SRC)/parser.cpp $(SRC)/parser_util.cpp $(SRC)/string_util.cpp
 
 all: wofgen_ipfw wofgen_iptables wofgen_netsh wofgen_pf wofgen_ufw wofgen_wipfw
 

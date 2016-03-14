@@ -8,7 +8,7 @@
 extern std::string pre_rules(std::string def_out,std::string def_in);
 extern std::string post_rules(std::string def_out,std::string def_in);
 
-static inline void show_help()
+void show_help()
 {
 	std::string name("PROG");
 	#if(defined(WOFGEN_IPFW))
@@ -30,7 +30,7 @@ static inline void show_help()
 
 int main(int argc,char* argv[])
 {
-	std::cerr<<"Walls of Fire - Universal Firewall Generator"<<std::endl;
+	std::cerr<<"Walls of Fire - Universal firewall configuration generator."<<std::endl;
 	std::istream* istr=&std::cin;
 	std::ifstream fstr;
 	int lineno=0;
