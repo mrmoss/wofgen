@@ -5,12 +5,7 @@
 #include <stdexcept>
 #include <vector>
 
-extern std::string gen_rule(std::string proto,
-	std::string l_ip,std::string l_mask,std::string l_port,
-	std::string dir,
-	std::string f_ip,std::string f_mask,std::string f_port,
-	std::string action,
-	bool V6);
+extern std::string gen_rule(wof_t wof);
 
 static inline int ishexdigit(int c)
 {
@@ -427,32 +422,35 @@ void wof_parse_line(std::string line,std::string& output,
 	{
 		if(!parse_def(line,def_out,def_in))
 		{
+			wof_t wof;
 			bool was_any=false;
-			std::string proto(parse_proto(line));
+			wof.proto=parse_proto(line);
 			bool l_v6=false;
-			std::string l_ip(parse_ip(line,was_any,l_v6,"after proto"));
-			std::string l_mask(parse_subnet_mask(line,was_any,l_v6));
-			std::string l_port(parse_port(line));
-			std::string dir(parse_dir(line,"after local address"));
+			wof.l_ip=parse_ip(line,was_any,l_v6,"after proto");
+			wof.l_mask=parse_subnet_mask(line,was_any,l_v6);
+			wof.l_port=parse_port(line);
+			wof.dir=parse_dir(line,"after local address");
 			bool f_v6=false;
-			std::string f_ip(parse_ip(line,was_any,f_v6,"after direction"));
+			wof.f_ip=parse_ip(line,was_any,f_v6,"after direction");
 			if(l_v6!=f_v6)
-				throw std::runtime_error("Local \""+l_ip+"\" and foreign \""+f_ip+
+				throw std::runtime_error("Local \""+wof.l_ip+
+					"\" and foreign \""+wof.f_ip+
 					"\" addresses must be of the same version.");
-			std::string f_mask(parse_subnet_mask(line,was_any,f_v6));
-			std::string f_port(parse_port(line));
-			std::string action(parse_action(line,"after to IP address"));
-			if(dir=="<>")
+			wof.f_mask=parse_subnet_mask(line,was_any,f_v6);
+			wof.f_port=parse_port(line);
+			wof.action=parse_action(line,"after to IP address");
+			wof.V6=(l_v6||f_v6);
+			if(wof.dir=="<>")
 			{
-				output+=gen_rule(proto,l_ip,l_mask,l_port,"<",f_ip,
-					f_mask,f_port,action,(l_v6||f_v6))+"\n";
-				output+=gen_rule(proto,l_ip,l_mask,l_port,">",f_ip,
-					f_mask,f_port,action,(l_v6||f_v6))+"\n";
+				wof.dir="<";
+				output+=gen_rule(wof)+"\n";
+				wof.dir=">";
+				output+=gen_rule(wof)+"\n";
+				wof.dir="<>";
 			}
 			else
 			{
-				output+=gen_rule(proto,l_ip,l_mask,l_port,dir,f_ip,
-					f_mask,f_port,action,(l_v6||f_v6))+"\n";
+				output+=gen_rule(wof)+"\n";
 			}
 		}
 		if(line.size()>0)

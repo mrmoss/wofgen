@@ -1,3 +1,4 @@
+#include "parser.hpp"
 #include <sstream>
 #include <string>
 
@@ -35,38 +36,33 @@ std::string post_rules(std::string def_out,std::string def_in)
 	return "";
 }
 
-std::string gen_rule(std::string proto,
-	std::string l_ip,std::string l_mask,std::string l_port,
-	std::string dir,
-	std::string f_ip,std::string f_mask,std::string f_port,
-	std::string action,
-	bool V6)
+std::string gen_rule(wof_t wof)
 {
 	std::string rule;
 	rule+="netsh advfirewall firewall add rule";
 	rule+=" name=\""+to_string(rule_num++)+"\"";
-	if(dir=="<")
+	if(wof.dir=="<")
 		rule+=" dir=in ";
 	else
 		rule+=" dir=out";
-	if(action=="deny")
+	if(wof.action=="deny")
 		rule+=" action=block";
 	else
 		rule+=" action=allow";
-	rule+=" protocol="+proto;
+	rule+=" protocol="+wof.proto;
 	rule+=" localip=";
-	if(l_mask!="0")
-		rule+=l_ip+"/"+l_mask;
+	if(wof.l_mask!="0")
+		rule+=wof.l_ip+"/"+wof.l_mask;
 	else
 		rule+="any";
 	rule+=" remoteip=";
-	if(f_mask!="0")
-		rule+=f_ip+"/"+f_mask;
+	if(wof.f_mask!="0")
+		rule+=wof.f_ip+"/"+wof.f_mask;
 	else
 		rule+="any";
-	if(l_port!="0")
-		rule+=" localport="+l_port;
-	if(f_port!="0")
-		rule+=" remoteport="+f_port;
+	if(wof.l_port!="0")
+		rule+=" localport="+wof.l_port;
+	if(wof.f_port!="0")
+		rule+=" remoteport="+wof.f_port;
 	return rule;
 }

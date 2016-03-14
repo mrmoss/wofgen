@@ -1,3 +1,4 @@
+#include "parser.hpp"
 #include <string>
 
 std::string pre_rules(std::string def_out,std::string def_in)
@@ -16,35 +17,30 @@ std::string post_rules(std::string def_out,std::string def_in)
 	return "ufw --force enable\n";
 }
 
-std::string gen_rule(std::string proto,
-	std::string l_ip,std::string l_mask,std::string l_port,
-	std::string dir,
-	std::string f_ip,std::string f_mask,std::string f_port,
-	std::string action,
-	bool V6)
+std::string gen_rule(wof_t wof)
 {
 	std::string rule;
 	rule+="ufw ";
-	if(action=="deny")
+	if(wof.action=="deny")
 		rule+="block";
 	else
 		rule+="allow";
 	std::string dir_str=" out";
-	if(dir=="<")
+	if(wof.dir=="<")
 	{
 		dir_str=" in ";
-		std::swap(l_ip,f_ip);
-		std::swap(l_mask,f_mask);
-		std::swap(l_port,f_port);
+		std::swap(wof.l_ip,wof.f_ip);
+		std::swap(wof.l_mask,wof.f_mask);
+		std::swap(wof.l_port,wof.f_port);
 	}
 	rule+=dir_str;
-	rule+=" proto "+proto;
-	rule+=" from "+l_ip+"/"+l_mask;
-	if(l_port!="0")
-		rule+=" port "+l_port;
-	rule+=" to "+f_ip+"/"+f_mask;
-	if(f_port!="0")
-		rule+=" port "+f_port;
+	rule+=" proto "+wof.proto;
+	rule+=" from "+wof.l_ip+"/"+wof.l_mask;
+	if(wof.l_port!="0")
+		rule+=" port "+wof.l_port;
+	rule+=" to "+wof.f_ip+"/"+wof.f_mask;
+	if(wof.f_port!="0")
+		rule+=" port "+wof.f_port;
 
 	return rule;
 }

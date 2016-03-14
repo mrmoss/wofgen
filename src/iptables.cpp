@@ -1,3 +1,4 @@
+#include "parser.hpp"
 #include <string>
 
 std::string pre_rules(std::string def_out,std::string def_in)
@@ -56,15 +57,10 @@ std::string post_rules(std::string def_out,std::string def_in)
 	return post;
 }
 
-std::string gen_rule(std::string proto,
-	std::string l_ip,std::string l_mask,std::string l_port,
-	std::string dir,
-	std::string f_ip,std::string f_mask,std::string f_port,
-	std::string action,
-	bool V6)
+std::string gen_rule(wof_t wof)
 {
 	std::string rule;
-	if(V6)
+	if(wof.V6)
 		rule+="ip6tables";
 	else
 		rule+="iptables";
@@ -72,22 +68,22 @@ std::string gen_rule(std::string proto,
 	std::string dir_str="OUTPUT";
 	std::string l_letter="s";
 	std::string f_letter="d";
-	if(dir=="<")
+	if(wof.dir=="<")
 	{
 		dir_str="INPUT ";
 		std::swap(l_letter,f_letter);
 	}
 	rule+=dir_str;
-	rule+=" -p "+proto;
-	rule+=" -" +l_letter+" "    +l_ip+"/"+l_mask;
+	rule+=" -p "+wof.proto;
+	rule+=" -" +l_letter+" "    +wof.l_ip+"/"+wof.l_mask;
 
-	if(l_port!="0")
-		rule+=" --"+l_letter+"port "+l_port;
-	rule+=" -" +f_letter+" "    +f_ip+"/"+f_mask;
-	if(f_port!="0")
-		rule+=" --"+f_letter+"port "+f_port;
+	if(wof.l_port!="0")
+		rule+=" --"+l_letter+"port "+wof.l_port;
+	rule+=" -" +f_letter+" "    +wof.f_ip+"/"+wof.f_mask;
+	if(wof.f_port!="0")
+		rule+=" --"+f_letter+"port "+wof.f_port;
 	rule+=" --jump ";
-	if(action=="deny")
+	if(wof.action=="deny")
 		rule+="DROP";
 	else
 		rule+="ACCEPT";
