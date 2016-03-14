@@ -34,17 +34,39 @@ void wof_parse_line(std::string line,std::string& output,
 			wof.f_port=parse_port(line);
 			wof.action=parse_action(line,"after to IP address");
 			wof.V6=(l_v6||f_v6);
-			if(wof.dir=="<>")
+			if(wof.proto=="any"||wof.proto=="tcp")
 			{
-				wof.dir="<";
-				output+=gen_rule(wof)+"\n";
-				wof.dir=">";
-				output+=gen_rule(wof)+"\n";
-				wof.dir="<>";
+				wof_t proto_copy=wof;
+				proto_copy.proto="tcp";
+				if(wof.dir=="<>"||wof.dir=="<")
+				{
+					wof_t dir_copy=proto_copy;
+					dir_copy.dir="<";
+					output+=gen_rule(dir_copy)+"\n";
+				}
+				if(wof.dir=="<>"||wof.dir==">")
+				{
+					wof_t dir_copy=proto_copy;
+					dir_copy.dir=">";
+					output+=gen_rule(dir_copy)+"\n";
+				}
 			}
-			else
+			if(wof.proto=="any"||wof.proto=="udp")
 			{
-				output+=gen_rule(wof)+"\n";
+				wof_t proto_copy=wof;
+				proto_copy.proto="udp";
+				if(wof.dir=="<>"||wof.dir=="<")
+				{
+					wof_t dir_copy=proto_copy;
+					dir_copy.dir="<";
+					output+=gen_rule(dir_copy)+"\n";
+				}
+				if(wof.dir=="<>"||wof.dir==">")
+				{
+					wof_t dir_copy=proto_copy;
+					dir_copy.dir=">";
+					output+=gen_rule(dir_copy)+"\n";
+				}
 			}
 		}
 		if(line.size()>0)

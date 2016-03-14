@@ -94,8 +94,8 @@ std::string parse_symbol_throw(std::string& str,const std::string& symbol,const 
 std::string parse_proto(std::string& str)
 {
 	std::string proto=parse_block(str);
-	if(to_lower(proto)!="tcp"&&to_lower(proto)!="udp")
-		throw std::runtime_error("Unknown proto \""+proto+"\" (expected \"tcp\" or \"udp\").");
+	if(to_lower(proto)!="tcp"&&to_lower(proto)!="udp"&&to_lower(proto)!="any")
+		throw std::runtime_error("Unknown proto \""+proto+"\" (expected \"tcp\", \"udp\", or \"any\").");
 	return to_lower(proto);
 }
 
