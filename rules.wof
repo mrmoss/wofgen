@@ -26,3 +26,43 @@ tcp any>any:443 pass
 
 #WHOIS Client
 tcp any>any:43 pass
+
+#AD Server
+#any any:389 <any pass
+#tcp any:636 <any pass
+#tcp any:3268<any pass
+#tcp any:3269<any pass
+#any any:88  <any pass
+#any any:53  <any pass
+#any any:445 <any pass
+#tcp any:25  <any pass
+#tcp any:135 <any pass
+#tcp any:5722<any pass
+#udp any:123 <any pass
+#any any:464 <any pass
+#udp any:138 <any pass
+#tcp any:9389<any pass
+#udp any:67  <any pass
+#udp any:2535<any pass
+#udp any:137 <any pass
+#tcp any:139 <any pass
+
+#AD Client
+#any any>any:389  pass
+#tcp any>any:636  pass
+#tcp any>any:3268 pass
+#tcp any>any:3269 pass
+#any any>any:88   pass
+#any any>any:53   pass
+#any any>any:445  pass
+#tcp any>any:25   pass
+#tcp any>any:135  pass
+#tcp any>any:5722 pass
+#udp any>any:123  pass
+#any any>any:464  pass
+#udp any>any:138  pass
+#tcp any>any:9389 pass
+#udp any>any:67   pass
+#udp any>any:2535 pass
+#udp any>any:137  pass
+#tcp any>any:139  pass
