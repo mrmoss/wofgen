@@ -27,7 +27,7 @@ std::string gen_rule(wof_t wof)
 		rule+="deny";
 	else
 		rule+="allow";
-	rule+=" log quick ";
+	rule+=" log ";
 	std::string dir_str=" out";
 	if(wof.dir=="<")
 	{
