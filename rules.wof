@@ -11,7 +11,7 @@ udp any>8.8.8.8:53 pass
 tcp any>any:21 pass
 
 #NTP Client
-udp any<>216.239.32.15:123 pass
+udp any:123<>216.239.32.15:123 pass
 
 #Printer Client
 tcp any>any:631  pass
