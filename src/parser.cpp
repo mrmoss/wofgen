@@ -10,7 +10,7 @@ extern std::string gen_rule(wof_t wof);
 void wof_parse_line(std::string line,std::string& output,
 	std::string& def_out,std::string& def_in)
 {
-	line=split(strip(line),"#")[0];
+	line=strip(split(strip(line),"#")[0]);
 
 	if(line.size()>0)
 	{
