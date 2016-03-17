@@ -35,15 +35,15 @@ std::vector<std::string> split(std::string str,const std::string& delimeter)
 
 std::string strip_start(std::string str)
 {
-	while(str.size()>0&&isspace(str[0])!=0)
-		str.erase(0,1);
+	while(str.size()>0&&(isspace(str[0])!=0||str[0]<0))
+		str=str.substr(1,str.size());
 	return str;
 }
 
 std::string strip_end(std::string str)
 {
-	while(str.size()>0&&isspace(str[str.size()-1])!=0)
-		str.erase(str.size()-1,1);
+	while(str.size()>0&&(isspace(str[str.size()-1])!=0||str[str.size()-1]<0))
+		str=str.substr(0,str.size()-1);
 	return str;
 }
 
@@ -55,7 +55,7 @@ std::string strip(std::string str)
 std::string strip_all(std::string str)
 {
 	for(size_t ii=0;ii<str.size();++ii)
-		if(isspace(str[ii])!=0)
+		if(isspace(str[ii])!=0||str[ii]<0)
 			str.erase(ii--,1);
 	return str;
 }

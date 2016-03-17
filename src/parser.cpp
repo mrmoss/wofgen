@@ -69,6 +69,7 @@ void wof_parse_line(std::string line,std::string& output,
 				}
 			}
 		}
+
 		if(line.size()>0)
 			throw std::runtime_error("Unknown string \""+line+"\".");
 	}
