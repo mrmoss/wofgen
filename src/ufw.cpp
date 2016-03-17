@@ -3,6 +3,10 @@
 
 std::string pre_rules(std::string def_out,std::string def_in)
 {
+	if(def_out=="pass")
+		def_out="allow";
+	if(def_in=="pass")
+		def_in="allow";
 	std::string pre;
 	pre+="ufw --force disable\n";
 	pre+="ufw --force reset\n";
@@ -22,7 +26,7 @@ std::string gen_rule(wof_t wof)
 	std::string rule;
 	rule+="ufw ";
 	if(wof.action=="deny")
-		rule+="block";
+		rule+="deny";
 	else
 		rule+="allow";
 	std::string dir_str=" out";
