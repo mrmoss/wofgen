@@ -22,11 +22,11 @@ std::string pre_rules(std::string def_out,std::string def_in)
 	else
 		def_in="allow";
 	std::string pre;
-	pre+="netsh advfirewall firewall set rule name=all new enable=no\n";
-	pre+="netsh advfirewall firewall delete rule name=all\n";
-	pre+="netsh advfirewall set all state on\n";
-	pre+="netsh advfirewall set all firewallpolicy "+def_in+"inbound,"+def_out+"outbound\n";
-	pre+="netsh advfirewall set all logging filename \"C:\\wof.log\"\n";
+	pre+="netsh advfirewall firewall set rule name=all profile=any new enable=no\n";
+	pre+="netsh advfirewall firewall delete rule profile=any name=all\n";
+	pre+="netsh advfirewall set allprofiles state on\n";
+	pre+="netsh advfirewall set allprofiles firewallpolicy "+def_in+"inbound,"+def_out+"outbound\n";
+	pre+="netsh advfirewall set allprofiles logging filename \"C:\\wof.log\"\n";
 	return pre;
 }
 
@@ -39,8 +39,8 @@ std::string post_rules(std::string def_out,std::string def_in)
 std::string gen_rule(wof_t wof)
 {
 	std::string rule;
-	rule+="netsh advfirewall firewall add rule";
-	rule+=" name=\""+to_string(rule_num++)+"\"";
+	rule+="netsh advfirewall firewall add rule profile=any ";
+	rule+="name=\""+to_string(rule_num++)+"\"";
 	if(wof.dir=="<")
 		rule+=" dir=in ";
 	else
