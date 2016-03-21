@@ -43,19 +43,23 @@ int main(int argc,char* argv[])
 				throw std::runtime_error("Could not open file \""+std::string(argv[1])+"\".");
 			istr=&fstr;
 		}
-		std::vector<std::string> lines;
 		std::string temp;
-		while(true)
-			if(getline(*istr,temp))
-				lines.push_back(temp);
-			else
-				break;
-		fstr.close();
 		std::string def_out;
 		std::string def_in;
 		std::string output;
-		for(lineno=0;lineno<(int)lines.size();++lineno)
-			wof_parse_line(lines[lineno],output,def_out,def_in);
+		while(true)
+		{
+			if(getline(*istr,temp))
+			{
+				wof_parse_line(temp,output,def_out,def_in);
+				++lineno;
+			}
+			else
+			{
+				break;
+			}
+		}
+		fstr.close();
 		if(def_out.size()==0&&def_in.size()==0&&output.size()==0)
 		{
 			lineno=-1;
