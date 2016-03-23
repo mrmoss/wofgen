@@ -24,7 +24,8 @@ void show_help()
 	#elif(defined(WOFGEN_WIPFW))
 		name="wipfw";
 	#endif
-	std::cerr<<"  Usage: ./wofgen_"<<name<<" [FILE]"<<std::endl;
+	std::cerr<<"  Usage: ./wofgen_"<<name<<"[--help] [FILE]"<<std::endl;
+	std::cerr<<"  --help            Show help menu."<<std::endl;
 	std::cerr<<"  If no rules file is provided, rules will be read from stdin."<<std::endl;
 }
 
@@ -38,10 +39,28 @@ int main(int argc,char* argv[])
 	{
 		if(argc>1)
 		{
-			fstr.open(argv[1]);
-			if(!fstr)
-				throw std::runtime_error("Could not open file \""+std::string(argv[1])+"\".");
-			istr=&fstr;
+			for(int ii=1;ii<argc;++ii)
+			{
+				std::string cli(argv[ii]);
+
+				if(ii+1==argc&&cli.substr(0,1)!="-")
+				{
+					fstr.open(argv[ii]);
+					if(!fstr)
+						throw std::runtime_error("Could not open file \""+cli+"\".");
+					istr=&fstr;
+				}
+				else
+				{
+					if(cli=="--help")
+					{
+						show_help();
+						return 1;
+					}
+
+					throw std::runtime_error("Unknown cli argument \""+cli+"\".");
+				}
+			}
 		}
 		std::string temp;
 		std::string def_out;
