@@ -1,16 +1,19 @@
 Walls of Fire - Universal firewall configuration generator.
 
-	Ever get tired of trying to remember how to use ipfw, iptables, netsh, ipf/pf, ufw, wipfw, etc...?
-	Instead of trying to remember, learn the wof "simple syntax" and generate all of them:
+Ever get tired of trying to remember how to use ipfw, iptables, netsh, ipf/pf, ufw, wipfw, etc...?
+
+Instead of trying to remember, learn the wof "simple syntax" and generate all of them:
 
 	Syntax:
 		tcp/udp local_address/mask:local_port direction remote_address/mask:remote_port pass/deny
 
-	Enables established related on incoming ports (allow out what you allowed in).
-	Zero dependencies (other than a C++ compiler and the C++ STL).
+Enables established related on incoming ports (allow out what you allowed in).
 
-	Eveything but ipf/pf and wipfw cranks out commands that can be run in a terminal.
-	Sadly, ipf/pf and wipfw require the use of a configuration file, so that is generated instead.
+Zero dependencies (other than a C++ compiler and the C++ STL).
+
+Eveything but ipf/pf and wipfw cranks out commands that can be run in a terminal.
+
+Sadly, ipf/pf and wipfw require the use of a configuration file, so that is generated instead.
 
 Example Configuration Lines:
 
@@ -37,3 +40,9 @@ Example Usage:
 
 	#Windows
 	type rules.wof|bin\wofgen_netsh
+
+Web Version:
+
+If you don't want to download the site, you can use [wofgenserver](https://github.com/mrmoss/wofgenserver).
+
+Alternatively, there is a running version at: https://do.nullify.cc/wof/
