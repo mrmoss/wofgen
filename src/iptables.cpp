@@ -26,6 +26,10 @@ std::string pre_rules(std::string def_out,std::string def_in)
 	pre+="ip6tables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT\n";
 	pre+="iptables -A OUTPUT -m state --state ESTABLISHED -j ACCEPT\n";
 	pre+="ip6tables -A OUTPUT -m state --state ESTABLISHED -j ACCEPT\n";
+	pre+="iptables -A INPUT -i lo -j ACCEPT\n";
+	pre+="ip6tables -A INPUT -i lo -j ACCEPT\n";
+	pre+="iptables -A OUTPUT -o lo -j ACCEPT\n";
+	pre+="ip6tables -A OUTPUT -o lo -j ACCEPT\n";
 	return pre;
 }
 
