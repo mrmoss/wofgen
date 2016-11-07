@@ -8,6 +8,7 @@ udp any:68>any:67 pass
 udp any>8.8.8.8:53 pass
 
 #FTP Client
+tcp any<any:20 pass
 tcp any>any:21 pass
 
 #NTP Client
