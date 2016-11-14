@@ -2,7 +2,7 @@
 default <> deny
 
 #DHCP Client
-udp any:68>any:67 pass
+udp any:68<>any:67 pass
 
 #DNS Client
 udp any>8.8.8.8:53 pass
