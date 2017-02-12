@@ -20,4 +20,8 @@ struct wof_t
 void wof_parse_line(std::string line,std::string& output,
 	std::string& def_out,std::string& def_in);
 
+bool wof_is_any_ip(const std::string& ip,const std::string& mask,const bool V6);
+
+bool wof_is_exact_ip(const std::string& mask,const bool V6);
+
 #endif

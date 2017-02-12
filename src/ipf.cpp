@@ -3,22 +3,25 @@
 
 std::string pre_rules(std::string def_out,std::string def_in)
 {
-	if(def_out=="pass")
-		def_out="allow";
-	if(def_in=="pass")
-		def_in="allow";
+	if(def_out=="deny")
+		def_out="block";
+	else
+		def_out="pass ";
+	if(def_in=="deny")
+		def_in="block";
+	else
+		def_in="pass ";
 	std::string pre;
-	pre+="ufw --force disable\n";
-	pre+="ufw --force reset\n";
-	pre+="ufw logging on\n";
-	pre+="ufw default "+def_out+" outgoing\n";
-	pre+="ufw default "+def_in+" incoming\n";
+	pre+="#Usually goes in: /etc/ipf/ipf.conf\n";
+	pre+="#You may need to enable the firewall service: svcadm enable ipfilter\n";
+	pre+=def_out+" out log all\n";
+	pre+=def_in+" in  log all\n";
 	return pre;
 }
 
 std::string post_rules(std::string def_out,std::string def_in)
 {
-	return "ufw --force enable\n";
+	return "";
 }
 
 std::string gen_rule(wof_t wof)
@@ -33,12 +36,10 @@ std::string gen_rule(wof_t wof)
 		wof.f_ip+="/"+wof.f_mask;
 
 	std::string rule;
-	rule+="ufw ";
 	if(wof.action=="deny")
-		rule+="deny";
+		rule+="block";
 	else
-		rule+="allow";
-
+		rule+="pass ";
 	std::string dir_str=" out";
 	if(wof.dir=="<")
 	{
@@ -47,15 +48,24 @@ std::string gen_rule(wof_t wof)
 		std::swap(wof.l_mask,wof.f_mask);
 		std::swap(wof.l_port,wof.f_port);
 	}
-
 	rule+=dir_str;
-	rule+=" proto "+wof.proto;
-	rule+=" from "+wof.l_ip;
+	rule+=" log quick ";
+	rule+="proto "+wof.proto;
+
+	if(wof.l_ip!="any"||wof.l_port!="0")
+		rule+=" from";
+	if(wof.l_ip!="any")
+		rule+=" "+wof.l_ip;
 	if(wof.l_port!="0")
-		rule+=" port "+wof.l_port;
-	rule+=" to "+wof.f_ip;
+		rule+=" port="+wof.l_port;
+
+	if(wof.f_ip!="any"||wof.f_port!="0")
+		rule+=" to";
+	if(wof.f_ip!="any")
+		rule+=" "+wof.f_ip;
 	if(wof.f_port!="0")
-		rule+=" port "+wof.f_port;
+		rule+=" port="+wof.f_port;
+	rule+=" keep state";
 
 	return rule;
 }

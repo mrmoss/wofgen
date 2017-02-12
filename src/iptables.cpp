@@ -65,12 +65,21 @@ std::string post_rules(std::string def_out,std::string def_in)
 
 std::string gen_rule(wof_t wof)
 {
-	std::string rule;
+	if(wof_is_any_ip(wof.l_ip,wof.l_mask,wof.V6))
+		wof.l_ip="any";
+	if(wof_is_any_ip(wof.f_ip,wof.f_mask,wof.V6))
+		wof.f_ip="any";
+	if(wof.l_mask!="0"&&!wof_is_exact_ip(wof.l_mask,wof.V6))
+		wof.l_ip+="/"+wof.l_mask;
+	if(wof.f_mask!="0"&&!wof_is_exact_ip(wof.f_mask,wof.V6))
+		wof.f_ip+="/"+wof.f_mask;
+
+		std::string rule;
 	if(wof.V6)
 		rule+="ip6tables";
 	else
 		rule+="iptables";
-	rule+=" --append ";
+	rule+=" -A ";
 	std::string dir_str="OUTPUT";
 	std::string l_letter="s";
 	std::string f_letter="d";
@@ -81,17 +90,21 @@ std::string gen_rule(wof_t wof)
 	}
 	rule+=dir_str;
 	rule+=" -p "+wof.proto;
-	rule+=" -" +l_letter+" "    +wof.l_ip+"/"+wof.l_mask;
 
+	if(wof.l_ip!="any")
+		rule+=" -" +l_letter+" "    +wof.l_ip;
 	if(wof.l_port!="0")
 		rule+=" --"+l_letter+"port "+wof.l_port;
-	rule+=" -" +f_letter+" "    +wof.f_ip+"/"+wof.f_mask;
+	if(wof.f_ip!="any")
+		rule+=" -" +f_letter+" "    +wof.f_ip;
 	if(wof.f_port!="0")
 		rule+=" --"+f_letter+"port "+wof.f_port;
-	rule+=" --jump ";
+	rule+=" -j ";
+
 	if(wof.action=="deny")
 		rule+="DROP";
 	else
 		rule+="ACCEPT";
+
 	return rule;
 }

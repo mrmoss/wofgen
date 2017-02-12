@@ -74,3 +74,13 @@ void wof_parse_line(std::string line,std::string& output,
 			throw std::runtime_error("Unknown string \""+line+"\".");
 	}
 }
+
+bool wof_is_any_ip(const std::string& ip,const std::string& mask,const bool V6)
+{
+	return (mask=="0"||(!V6&&ip=="0.0.0.0")||(V6&&ip=="::"));
+}
+
+bool wof_is_exact_ip(const std::string& mask,const bool V6)
+{
+	return ((!V6&&mask=="32")||(V6&&mask=="128"));
+}

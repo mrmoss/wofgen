@@ -6,6 +6,8 @@ bin/wofgen_netsh
 bin/wofgen_netsh.exe
 bin/wofgen_pf
 bin/wofgen_pf.exe
+bin/wofgen_ipf
+bin/wofgen_ipf.exe
 bin/wofgen_ufw
 bin/wofgen_ufw.exe
 bin/wofgen_wipfw
