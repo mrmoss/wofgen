@@ -23,7 +23,7 @@ std::string pre_rules(std::string def_out,std::string def_in)
 		def_in="allow";
 	std::string pre;
 	pre+="netsh advfirewall firewall set rule name=all profile=any new enable=no\n";
-	pre+="netsh advfirewall firewall delete rule profile=any name=all\n";
+	pre+="netsh advfirewall firewall delete rule name=all\n";
 	pre+="netsh advfirewall set allprofiles state on\n";
 	pre+="netsh advfirewall set allprofiles firewallpolicy "+def_in+"inbound,"+def_out+"outbound\n";
 	pre+="netsh advfirewall set allprofiles logging filename \"C:\\wof.log\"\n";
