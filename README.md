@@ -43,4 +43,4 @@ Example Usage:
 
 Web Version:
 
-There is a running version at: https://nullify.cc/wof/
+https://nullify.cc/wof/
