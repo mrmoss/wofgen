@@ -45,4 +45,4 @@ Web Version:
 
 If you don't want to download the site, you can use [wofgenserver](https://github.com/mrmoss/wofgenserver).
 
-Alternatively, there is a running version at: https://do.nullify.cc/wof/
+Alternatively, there is a running version at: https://nullify.cc/wof/
