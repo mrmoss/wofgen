@@ -43,6 +43,4 @@ Example Usage:
 
 Web Version:
 
-If you don't want to download the site, you can use [wofgenserver](https://github.com/mrmoss/wofgenserver).
-
 Alternatively, there is a running version at: https://nullify.cc/wof/
