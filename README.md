@@ -43,4 +43,4 @@ Example Usage:
 
 Web Version:
 
-https://nullify.cc/wof/
+https://imaprettykitty.com/wof/
